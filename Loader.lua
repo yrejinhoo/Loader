@@ -343,14 +343,16 @@ function Loader:CreateLoadingScreen()
     gui.Name = "LoadingScreen"
     gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
     gui.ResetOnSpawn = false
+    gui.IgnoreGuiInset = true
     
     local overlay = Instance.new("Frame")
     overlay.Size = UDim2.new(1, 0, 1, 0)
     overlay.BackgroundTransparency = 1
     overlay.Parent = gui
     
+    local panelHeight = isMobile and 280 or 300
     local panel = Instance.new("Frame")
-    panel.Size = UDim2.new(0, size.width, 0, math.min(size.height * 0.5, 300))
+    panel.Size = UDim2.new(0, size.width, 0, panelHeight)
     panel.Position = UDim2.new(0.5, 0, 0.5, 0)
     panel.AnchorPoint = Vector2.new(0.5, 0.5)
     panel.BackgroundColor3 = Color3.fromRGB(245, 245, 250)
@@ -368,15 +370,15 @@ function Loader:CreateLoadingScreen()
     content.ZIndex = 2
     content.Parent = panel
     
-    local logoSize = isMobile and 70 or 100
+    local logoSize = isMobile and 80 or 100
     local logo = Instance.new("TextLabel")
     logo.Size = UDim2.new(0, logoSize, 0, logoSize)
-    logo.Position = UDim2.new(0.5, 0, 0, isMobile and 25 or 40)
+    logo.Position = UDim2.new(0.5, 0, 0, isMobile and 30 or 40)
     logo.AnchorPoint = Vector2.new(0.5, 0)
     logo.BackgroundColor3 = Color3.fromRGB(100, 150, 255)
     logo.BackgroundTransparency = 0.2
     logo.Text = "🚀"
-    logo.TextSize = isMobile and 35 or 50
+    logo.TextSize = isMobile and 40 or 50
     logo.Font = Enum.Font.GothamBold
     logo.TextColor3 = Color3.fromRGB(255, 255, 255)
     logo.ZIndex = 2
@@ -385,8 +387,9 @@ function Loader:CreateLoadingScreen()
     addGradient(logo, {Color3.fromRGB(100, 150, 255), Color3.fromRGB(150, 100, 255)}, 135)
     
     local title = Instance.new("TextLabel")
-    title.Size = UDim2.new(1, -size.padding*2, 0, 35)
-    title.Position = UDim2.new(0, size.padding, 0, logoSize + (isMobile and 35 or 55))
+    title.Size = UDim2.new(1, -size.padding*2, 0, 40)
+    title.Position = UDim2.new(0.5, 0, 0, logoSize + (isMobile and 40 or 55))
+    title.AnchorPoint = Vector2.new(0.5, 0)
     title.BackgroundTransparency = 1
     title.Text = "Loading Rebels Loader"
     title.TextSize = size.fontSize.title
@@ -397,7 +400,8 @@ function Loader:CreateLoadingScreen()
     
     local status = Instance.new("TextLabel")
     status.Size = UDim2.new(1, -size.padding*2, 0, 25)
-    status.Position = UDim2.new(0, size.padding, 0, logoSize + (isMobile and 65 or 90))
+    status.Position = UDim2.new(0.5, 0, 0, logoSize + (isMobile and 75 or 95))
+    status.AnchorPoint = Vector2.new(0.5, 0)
     status.BackgroundTransparency = 1
     status.Text = "Initializing..."
     status.TextSize = size.fontSize.subtitle
@@ -407,20 +411,21 @@ function Loader:CreateLoadingScreen()
     status.Parent = content
     
     local progBg = Instance.new("Frame")
-    progBg.Size = UDim2.new(1, -size.padding*4, 0, 6)
-    progBg.Position = UDim2.new(0, size.padding*2, 1, isMobile and -35 or -50)
+    progBg.Size = UDim2.new(0.7, 0, 0, 8)
+    progBg.Position = UDim2.new(0.5, 0, 1, isMobile and -45 or -50)
+    progBg.AnchorPoint = Vector2.new(0.5, 0)
     progBg.BackgroundColor3 = Color3.fromRGB(200, 200, 210)
     progBg.BackgroundTransparency = 0.5
     progBg.ZIndex = 2
     progBg.Parent = content
-    addCorner(progBg, 3)
+    addCorner(progBg, 4)
     
     local progFill = Instance.new("Frame")
     progFill.Size = UDim2.new(0, 0, 1, 0)
     progFill.BackgroundColor3 = Color3.fromRGB(100, 150, 255)
     progFill.ZIndex = 3
     progFill.Parent = progBg
-    addCorner(progFill, 3)
+    addCorner(progFill, 4)
     addGradient(progFill, {Color3.fromRGB(100, 150, 255), Color3.fromRGB(150, 100, 255)}, 90)
     
     ensureBlur()
@@ -453,13 +458,14 @@ function Loader:CreateKeySystem(callback)
     gui.Name = "KeySystem"
     gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
     gui.ResetOnSpawn = false
+    gui.IgnoreGuiInset = true
     
     local overlay = Instance.new("Frame")
     overlay.Size = UDim2.new(1, 0, 1, 0)
     overlay.BackgroundTransparency = 1
     overlay.Parent = gui
     
-    local panelHeight = isMobile and math.min(size.height * 0.9, 500) or 520
+    local panelHeight = isMobile and math.min(size.height * 0.85, 520) or 540
     local panel = Instance.new("Frame")
     panel.Size = UDim2.new(0, size.width, 0, panelHeight)
     panel.Position = UDim2.new(0.5, 0, 0.5, 0)
@@ -480,20 +486,239 @@ function Loader:CreateKeySystem(callback)
     content.Parent = panel
     
     local profileSection = Instance.new("Frame")
-    profileSection.Size = UDim2.new(1, -size.padding*2, 0, isMobile and 70 or 100)
+    profileSection.Size = UDim2.new(1, -size.padding*2, 0, isMobile and 70 or 90)
     profileSection.Position = UDim2.new(0, size.padding, 0, size.padding)
     profileSection.BackgroundTransparency = 1
     profileSection.ZIndex = 2
     profileSection.Parent = content
     
-    createClockWidget(content, size)
+    if not isMobile then
+        createClockWidget(content, size)
+    end
     
-    local avatarSize = isMobile and 60 or 80
+    local avatarSize = isMobile and 60 or 70
     local userAvatar = Instance.new("ImageLabel")
     userAvatar.Size = UDim2.new(0, avatarSize, 0, avatarSize)
     userAvatar.Position = UDim2.new(0, 0, 0, isMobile and 5 or 10)
     userAvatar.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
     userAvatar.BackgroundTransparency = 0.3
+    userAvatar.ZIndex = 2
+    userAvatar.Parent = profileSection
+    addCorner(userAvatar, isMobile and 14 or 16)
+    
+    pcall(function()
+        local Players = game:GetService("Players")
+        local LocalPlayer = Players.LocalPlayer
+        local thumb = Players:GetUserThumbnailAsync(LocalPlayer.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size150x150)
+        userAvatar.Image = thumb
+    end)
+    
+    local welcomeContainer = Instance.new("Frame")
+    welcomeContainer.Size = UDim2.new(1, -(avatarSize + 15), 1, 0)
+    welcomeContainer.Position = UDim2.new(0, avatarSize + 10, 0, 0)
+    welcomeContainer.BackgroundTransparency = 1
+    welcomeContainer.ZIndex = 2
+    welcomeContainer.Parent = profileSection
+    
+    local welcomeText = Instance.new("TextLabel")
+    welcomeText.Size = UDim2.new(1, -120, 0, 20)
+    welcomeText.Position = UDim2.new(0, 0, 0, isMobile and 12 or 15)
+    welcomeText.BackgroundTransparency = 1
+    welcomeText.Text = "Welcome back!"
+    welcomeText.TextSize = size.fontSize.subtitle
+    welcomeText.Font = Enum.Font.Gotham
+    welcomeText.TextColor3 = Color3.fromRGB(100, 100, 120)
+    welcomeText.TextXAlignment = Enum.TextXAlignment.Left
+    welcomeText.ZIndex = 2
+    welcomeText.Parent = welcomeContainer
+    
+    local usernameText = Instance.new("TextLabel")
+    usernameText.Size = UDim2.new(1, -120, 0, 30)
+    usernameText.Position = UDim2.new(0, 0, 0, isMobile and 32 or 38)
+    usernameText.BackgroundTransparency = 1
+    usernameText.Text = game.Players.LocalPlayer.Name
+    usernameText.TextSize = isMobile and 18 or size.fontSize.title
+    usernameText.Font = Enum.Font.GothamBold
+    usernameText.TextColor3 = Color3.fromRGB(40, 40, 50)
+    usernameText.TextXAlignment = Enum.TextXAlignment.Left
+    usernameText.TextTruncate = Enum.TextTruncate.AtEnd
+    usernameText.ZIndex = 2
+    usernameText.Parent = welcomeContainer
+    
+    if isMobile then
+        local mobileClock = Instance.new("TextLabel")
+        mobileClock.Size = UDim2.new(0, 90, 0, 18)
+        mobileClock.Position = UDim2.new(1, -90, 0, 12)
+        mobileClock.BackgroundTransparency = 1
+        mobileClock.Font = Enum.Font.GothamBold
+        mobileClock.TextSize = 14
+        mobileClock.TextColor3 = Color3.fromRGB(40, 40, 50)
+        mobileClock.TextXAlignment = Enum.TextXAlignment.Right
+        mobileClock.ZIndex = 2
+        mobileClock.Parent = welcomeContainer
+        
+        local function updateMobileClock()
+            local timeStr = getCurrentDateTime()
+            mobileClock.Text = timeStr
+        end
+        updateMobileClock()
+        spawn(function()
+            while mobileClock and mobileClock.Parent do
+                wait(1)
+                updateMobileClock()
+            end
+        end)
+    end
+    
+    local lockSize = isMobile and 80 or 100
+    local lockContainer = Instance.new("Frame")
+    lockContainer.Size = UDim2.new(0, lockSize, 0, lockSize)
+    lockContainer.Position = UDim2.new(0.5, 0, 0, isMobile and 110 or 140)
+    lockContainer.AnchorPoint = Vector2.new(0.5, 0)
+    lockContainer.BackgroundColor3 = Color3.fromRGB(255, 120, 100)
+    lockContainer.BackgroundTransparency = 0.2
+    lockContainer.ZIndex = 2
+    lockContainer.Parent = content
+    addCorner(lockContainer, isMobile and 18 or 24)
+    addGradient(lockContainer, {Color3.fromRGB(255, 120, 100), Color3.fromRGB(255, 100, 150)}, 135)
+    
+    local lockIcon = Instance.new("TextLabel")
+    lockIcon.Size = UDim2.new(1, 0, 1, 0)
+    lockIcon.BackgroundTransparency = 1
+    lockIcon.Text = "🔐"
+    lockIcon.TextSize = isMobile and 45 or 50
+    lockIcon.Font = Enum.Font.GothamBold
+    lockIcon.TextColor3 = Color3.fromRGB(255, 255, 255)
+    lockIcon.ZIndex = 3
+    lockIcon.Parent = lockContainer
+    
+    local title = Instance.new("TextLabel")
+    title.Size = UDim2.new(1, -size.padding*2, 0, 35)
+    title.Position = UDim2.new(0.5, 0, 0, isMobile and 210 or 260)
+    title.AnchorPoint = Vector2.new(0.5, 0)
+    title.BackgroundTransparency = 1
+    title.Text = "Key Verification"
+    title.TextSize = isMobile and 22 or size.fontSize.title
+    title.Font = Enum.Font.GothamBold
+    title.TextColor3 = Color3.fromRGB(40, 40, 50)
+    title.ZIndex = 2
+    title.Parent = content
+    
+    local subtitle = Instance.new("TextLabel")
+    subtitle.Size = UDim2.new(1, -size.padding*2, 0, 25)
+    subtitle.Position = UDim2.new(0.5, 0, 0, isMobile and 245 or 295)
+    subtitle.AnchorPoint = Vector2.new(0.5, 0)
+    subtitle.BackgroundTransparency = 1
+    subtitle.Text = "Enter your access key to continue"
+    subtitle.TextSize = size.fontSize.subtitle
+    subtitle.Font = Enum.Font.Gotham
+    subtitle.TextColor3 = Color3.fromRGB(100, 100, 120)
+    subtitle.ZIndex = 2
+    subtitle.Parent = content
+    
+    local inputBg = Instance.new("Frame")
+    inputBg.Size = UDim2.new(1, -size.padding*2, 0, isMobile and 50 or 54)
+    inputBg.Position = UDim2.new(0, size.padding, 0, isMobile and 285 or 340)
+    inputBg.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    inputBg.BackgroundTransparency = 0.2
+    inputBg.BorderSizePixel = 0
+    inputBg.ZIndex = 2
+    inputBg.Parent = content
+    addCorner(inputBg, isMobile and 12 or 16)
+    
+    local keyInput = Instance.new("TextBox")
+    keyInput.Size = UDim2.new(1, -24, 1, 0)
+    keyInput.Position = UDim2.new(0, 12, 0, 0)
+    keyInput.BackgroundTransparency = 1
+    keyInput.PlaceholderText = "Enter Key Here..."
+    keyInput.Text = ""
+    keyInput.TextSize = size.fontSize.button
+    keyInput.Font = Enum.Font.Gotham
+    keyInput.TextColor3 = Color3.fromRGB(40, 40, 50)
+    keyInput.PlaceholderColor3 = Color3.fromRGB(150, 150, 160)
+    keyInput.TextXAlignment = Enum.TextXAlignment.Left
+    keyInput.ClearTextOnFocus = false
+    keyInput.ZIndex = 3
+    keyInput.Parent = inputBg
+    
+    local submitBtn = Instance.new("TextButton")
+    submitBtn.Size = UDim2.new(1, -size.padding*2, 0, isMobile and 50 or 54)
+    submitBtn.Position = UDim2.new(0, size.padding, 0, isMobile and 350 or 410)
+    submitBtn.Text = "Verify Key"
+    submitBtn.Font = Enum.Font.GothamBold
+    submitBtn.TextSize = size.fontSize.button
+    submitBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    submitBtn.BackgroundColor3 = Color3.fromRGB(110, 140, 255)
+    submitBtn.BackgroundTransparency = 0
+    submitBtn.BorderSizePixel = 0
+    submitBtn.ZIndex = 2
+    submitBtn.Parent = content
+    addCorner(submitBtn, isMobile and 12 or 16)
+    
+    local btnGradient = addGradient(submitBtn, {
+        Color3.fromRGB(140, 160, 255), 
+        Color3.fromRGB(100, 130, 255)
+    }, 90)
+    
+    local getKeyBtn = Instance.new("TextButton")
+    getKeyBtn.Size = UDim2.new(1, -size.padding*2, 0, 35)
+    getKeyBtn.Position = UDim2.new(0, size.padding, 1, isMobile and -50 or -55)
+    getKeyBtn.Text = "📋 Get Key: " .. Config.KeySystem.keyLink
+    getKeyBtn.Font = Enum.Font.Gotham
+    getKeyBtn.TextSize = isMobile and 11 or 14
+    getKeyBtn.TextColor3 = Color3.fromRGB(100, 100, 120)
+    getKeyBtn.BackgroundTransparency = 1
+    getKeyBtn.ZIndex = 2
+    getKeyBtn.Parent = content
+    
+    local errorMsg = Instance.new("TextLabel")
+    errorMsg.Size = UDim2.new(1, -size.padding*2, 0, 22)
+    errorMsg.Position = UDim2.new(0, size.padding, 0, isMobile and 408 or 472)
+    errorMsg.BackgroundTransparency = 1
+    errorMsg.Text = ""
+    errorMsg.TextSize = size.fontSize.subtitle
+    errorMsg.Font = Enum.Font.GothamBold
+    errorMsg.TextColor3 = Color3.fromRGB(255, 100, 100)
+    errorMsg.ZIndex = 2
+    errorMsg.Visible = false
+    errorMsg.Parent = content
+    
+    ensureBlur()
+    safeParent(gui)
+    
+    getKeyBtn.MouseButton1Click:Connect(function()
+        setclipboard(Config.KeySystem.keyLink)
+        getKeyBtn.Text = "✅ Link Copied!"
+        wait(2)
+        getKeyBtn.Text = "📋 Get Key: " .. Config.KeySystem.keyLink
+    end)
+    
+    local function verifyKey()
+        local enteredKey = keyInput.Text
+        if enteredKey == Config.KeySystem.correctKey then
+            errorMsg.Visible = false
+            submitBtn.Text = "✅ Verified!"
+            submitBtn.BackgroundColor3 = Color3.fromRGB(100, 200, 120)
+            submitBtn.BackgroundTransparency = 0
+            if btnGradient then btnGradient:Destroy() end
+            wait(0.5)
+            disableBlur()
+            gui:Destroy()
+            if callback then callback() end
+        else
+            errorMsg.Text = "❌ Invalid key! Please try again."
+            errorMsg.Visible = true
+            tween(inputBg, TweenInfo.new(0.1, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut, 0, true), {Position = UDim2.new(0, size.padding + 10, 0, isMobile and 285 or 340)})
+            wait(0.3)
+            inputBg.Position = UDim2.new(0, size.padding, 0, isMobile and 285 or 340)
+        end
+    end
+    
+    submitBtn.MouseButton1Click:Connect(verifyKey)
+    keyInput.FocusLost:Connect(function(enterPressed)
+        if enterPressed then verifyKey() end
+    end)
+endAvatar.BackgroundTransparency = 0.3
     userAvatar.ZIndex = 2
     userAvatar.Parent = profileSection
     addCorner(userAvatar, isMobile and 14 or 20)
@@ -691,6 +916,7 @@ function Loader:CreateMainUI()
     gui.Name = "ModernGlassLoader"
     gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
     gui.ResetOnSpawn = false
+    gui.IgnoreGuiInset = true
 
     local overlay = Instance.new("Frame")
     overlay.Name = "Overlay"
