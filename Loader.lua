@@ -322,14 +322,20 @@ local function createLoader(isVIP, playerName)
     -- Map Selection Container
     local MapContainer = Instance.new("Frame")
     MapContainer.Name = "MapContainer"
-    MapContainer.Size = UDim2.new(1, -40, 0, isMobile() and 170 or 220)
+    MapContainer.Size = UDim2.new(1, -40, 1, isMobile() and -120 or -150)
     MapContainer.Position = UDim2.new(0.5, 0, 0, isMobile() and 75 or 100)
     MapContainer.AnchorPoint = Vector2.new(0.5, 0)
     MapContainer.BackgroundTransparency = 1
     MapContainer.Visible = false
     MapContainer.Parent = RightPanel
 
-    -- Map Selection Title
+    -- Map Selection Header (Fixed)
+    local MapHeader = Instance.new("Frame")
+    MapHeader.Size = UDim2.new(1, 0, 0, isMobile() and 60 or 80)
+    MapHeader.BackgroundTransparency = 1
+    MapHeader.Parent = MapContainer
+
+    -- Map Selection Title (Single)
     local MapTitle = Instance.new("TextLabel")
     MapTitle.Size = UDim2.new(1, 0, 0, isMobile() and 25 or 35)
     MapTitle.BackgroundTransparency = 1
@@ -337,29 +343,42 @@ local function createLoader(isVIP, playerName)
     MapTitle.TextColor3 = Color3.fromRGB(255, 215, 0)
     MapTitle.TextSize = isMobile() and 16 or 22
     MapTitle.Font = Enum.Font.GothamBold
-    MapTitle.Parent = MapContainer
+    MapTitle.Parent = MapHeader
 
     local MapSubtitle = Instance.new("TextLabel")
     MapSubtitle.Size = UDim2.new(1, 0, 0, isMobile() and 15 or 20)
-    MapSubtitle.Position = UDim2.new(0, 0, 0, isMobile() and 25 or 35)
+    MapSubtitle.Position = UDim2.new(0, 0, 0, isMobile() and 30 or 40)
     MapSubtitle.BackgroundTransparency = 1
     MapSubtitle.Text = "Choose your destination"
     MapSubtitle.TextColor3 = Color3.fromRGB(160, 174, 192)
     MapSubtitle.TextSize = isMobile() and 9 or 11
     MapSubtitle.Font = Enum.Font.Gotham
-    MapSubtitle.Parent = MapContainer
+    MapSubtitle.Parent = MapHeader
 
-    -- Map Buttons Container
+    -- Scrollable Map Buttons Container
+    local MapsScrollFrame = Instance.new("ScrollingFrame")
+    MapsScrollFrame.Name = "MapsScrollFrame"
+    MapsScrollFrame.Size = UDim2.new(1, 0, 1, isMobile() and -60 or -80)
+    MapsScrollFrame.Position = UDim2.new(0, 0, 0, isMobile() and 60 or 80)
+    MapsScrollFrame.BackgroundTransparency = 1
+    MapsScrollFrame.ScrollBarThickness = 0
+    MapsScrollFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+    MapsScrollFrame.Parent = MapContainer
+
     local MapsFrame = Instance.new("Frame")
-    MapsFrame.Size = UDim2.new(1, 0, 1, isMobile() and -45 or -60)
-    MapsFrame.Position = UDim2.new(0, 0, 0, isMobile() and 45 or 60)
+    MapsFrame.Size = UDim2.new(1, 0, 1, 0)
     MapsFrame.BackgroundTransparency = 1
-    MapsFrame.Parent = MapContainer
+    MapsFrame.Parent = MapsScrollFrame
 
     local MapsLayout = Instance.new("UIGridLayout")
     MapsLayout.CellSize = UDim2.new(0.48, 0, 0, isMobile() and 90 or 120)
     MapsLayout.CellPadding = UDim2.new(0.04, 0, 0, isMobile() and 10 or 15)
     MapsLayout.Parent = MapsFrame
+
+    -- Update canvas size berdasarkan jumlah items
+    MapsLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+        MapsScrollFrame.CanvasSize = UDim2.new(0, 0, 0, MapsLayout.AbsoluteContentSize.Y)
+    end)
 
     -- Arunika Map Button
     local ArunikaButton = Instance.new("TextButton")
