@@ -1,4 +1,4 @@
--- VIP Loader System - FINAL FIX (NO TEXT, MAPS ALWAYS VISIBLE)
+-- VIP Loader System - FINAL FIX (MAPS NOW VISIBLE)
 -- Connected to: https://astrion-keycrate.vercel.app/api/validate
 
 local Players = game:GetService("Players")
@@ -266,26 +266,27 @@ local function createLoader(isVIP, playerName)
     StatusText.Visible = false
     StatusText.Parent = AuthContainer
 
-    -- Map Container (NO TEXT, JUST BUTTONS)
+    -- Map Container
     local MapContainer = Instance.new("Frame")
     MapContainer.Size = UDim2.new(1, -40, 1, isMobile() and -120 or -150)
     MapContainer.Position = UDim2.new(0.5, 0, 0, isMobile() and 75 or 100)
     MapContainer.AnchorPoint = Vector2.new(0.5, 0)
     MapContainer.BackgroundTransparency = 1
-    MapContainer.Visible = false  -- Default hidden
+    MapContainer.Visible = false
     MapContainer.Parent = RightPanel
 
     -- Scrollable maps
     local MapsScrollFrame = Instance.new("ScrollingFrame")
-    MapsScrollFrame.Size = UDim2.new(1, 0, 1, isMobile() and -40 or -50)
-    MapsScrollFrame.Position = UDim2.new(0, 0, 0, isMobile() and 40 or 50)
+    MapsScrollFrame.Size = UDim2.new(1, 0, 1, 0)
     MapsScrollFrame.BackgroundTransparency = 1
     MapsScrollFrame.ScrollBarThickness = isMobile() and 4 or 6
     MapsScrollFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+    MapsScrollFrame.BorderSizePixel = 0
     MapsScrollFrame.Parent = MapContainer
 
     local MapsFrame = Instance.new("Frame")
     MapsFrame.BackgroundTransparency = 1
+    MapsFrame.Size = UDim2.new(1, 0, 0, 0)
     MapsFrame.Parent = MapsScrollFrame
 
     local MapsLayout = Instance.new("UIGridLayout")
@@ -294,10 +295,13 @@ local function createLoader(isVIP, playerName)
     MapsLayout.SortOrder = Enum.SortOrder.LayoutOrder
     MapsLayout.Parent = MapsFrame
 
-    -- Connect canvas size to layout
-    MapsLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-        MapsScrollFrame.CanvasSize = UDim2.new(0, 0, 0, MapsLayout.AbsoluteContentSize.Y)
-    end)
+    -- Auto-update canvas size
+    local function updateCanvasSize()
+        MapsScrollFrame.CanvasSize = UDim2.new(0, 0, 0, MapsLayout.AbsoluteContentSize.Y + 20)
+    end
+    MapsLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(updateCanvasSize)
+    task.wait(0.05)
+    updateCanvasSize()
 
     -- Arunika Button
     local ArunikaButton = Instance.new("TextButton")
@@ -305,12 +309,13 @@ local function createLoader(isVIP, playerName)
     ArunikaButton.BackgroundTransparency = 0.8
     ArunikaButton.Text = ""
     ArunikaButton.Parent = MapsFrame
+    ArunikaButton.LayoutOrder = 1
     Instance.new("UICorner", ArunikaButton).CornerRadius = UDim.new(0, 12)
     Instance.new("UIStroke", ArunikaButton).Color = Color3.fromRGB(93, 173, 226)
 
     local ArunikaIcon = Instance.new("TextLabel")
     ArunikaIcon.Size = UDim2.new(1, 0, 0, isMobile() and 35 or 50)
-    ArunikaIcon.Position = UDim2.new(0, 0, 0, isMobile() and 15 or 20)
+    ArunikaIcon.Position = UDim2.new(0, 0, 0, isMobile() and 10 or 15)
     ArunikaIcon.BackgroundTransparency = 1
     ArunikaIcon.Text = "🗺️"
     ArunikaIcon.TextSize = isMobile() and 25 or 35
@@ -323,7 +328,7 @@ local function createLoader(isVIP, playerName)
     ArunikaText.BackgroundTransparency = 1
     ArunikaText.Text = "ARUNIKA"
     ArunikaText.TextColor3 = Color3.fromRGB(255, 255, 255)
-    ArunikaText.TextSize = isMobile() and 12 or 16
+    ArunikaText.TextSize = isMobile() and 11 or 14
     ArunikaText.Font = Enum.Font.GothamBold
     ArunikaText.Parent = ArunikaButton
 
@@ -333,12 +338,13 @@ local function createLoader(isVIP, playerName)
     YahayukButton.BackgroundTransparency = 0.8
     YahayukButton.Text = ""
     YahayukButton.Parent = MapsFrame
+    YahayukButton.LayoutOrder = 2
     Instance.new("UICorner", YahayukButton).CornerRadius = UDim.new(0, 12)
     Instance.new("UIStroke", YahayukButton).Color = Color3.fromRGB(93, 173, 226)
 
     local YahayukIcon = Instance.new("TextLabel")
     YahayukIcon.Size = UDim2.new(1, 0, 0, isMobile() and 35 or 50)
-    YahayukIcon.Position = UDim2.new(0, 0, 0, isMobile() and 15 or 20)
+    YahayukIcon.Position = UDim2.new(0, 0, 0, isMobile() and 10 or 15)
     YahayukIcon.BackgroundTransparency = 1
     YahayukIcon.Text = "🌍"
     YahayukIcon.TextSize = isMobile() and 25 or 35
@@ -351,7 +357,7 @@ local function createLoader(isVIP, playerName)
     YahayukText.BackgroundTransparency = 1
     YahayukText.Text = "YAHAYUK"
     YahayukText.TextColor3 = Color3.fromRGB(255, 255, 255)
-    YahayukText.TextSize = isMobile() and 12 or 16
+    YahayukText.TextSize = isMobile() and 11 or 14
     YahayukText.Font = Enum.Font.GothamBold
     YahayukText.Parent = YahayukButton
 
@@ -406,23 +412,11 @@ local function main()
         BackgroundTransparency = 0
     }):Play()
 
-    -- If VIP or already validated, show map immediately (NO TEXT!)
+    -- If VIP or already validated, show maps
     if isVIP or alreadyValid then
-        task.wait(0.5)
-        WelcomeText.Text = ""   -- Clear welcome text
-        Subtitle.Text = ""      -- Clear subtitle
+        task.wait(0.6)
         AuthContainer.Visible = false
         MapContainer.Visible = true
-        MapContainer.Position = UDim2.new(0.5, 0, 0, isMobile() and 75 or 100)
-
-        -- Force layout update
-        task.spawn(function()
-            task.wait(0.1)
-            local layout = MapContainer:FindFirstChild("MapsScrollFrame"):FindFirstChild("MapsFrame"):FindFirstChild("UIGridLayout")
-            if layout then
-                layout:ApplyAutoCast()
-            end
-        end)
     end
 
     -- Verify button
@@ -443,21 +437,9 @@ local function main()
                 showStatus(StatusText, "✓ Access granted!", true)
                 task.wait(1.2)
 
-                -- Switch to map view (NO TEXT!)
-                WelcomeText.Text = ""
-                Subtitle.Text = ""
+                -- Switch to map view
                 AuthContainer.Visible = false
                 MapContainer.Visible = true
-                MapContainer.Position = UDim2.new(0.5, 0, 0, isMobile() and 75 or 100)
-
-                -- Force layout update
-                task.spawn(function()
-                    task.wait(0.1)
-                    local layout = MapContainer:FindFirstChild("MapsScrollFrame"):FindFirstChild("MapsFrame"):FindFirstChild("UIGridLayout")
-                    if layout then
-                        layout:ApplyAutoCast()
-                    end
-                end)
             else
                 showStatus(StatusText, "✗ " .. (err or "Invalid key"), false)
             end
@@ -470,15 +452,14 @@ local function main()
 
     -- Hover effects
     local function hover(btn)
-        local origSize = btn.Size
         local origTrans = btn.BackgroundTransparency
         btn.MouseEnter:Connect(function()
-            TweenService:Create(btn, TweenInfo.new(0.2), {BackgroundTransparency = 0.5, Size = origSize + UDim2.new(0,0,0,5)}):Play()
+            TweenService:Create(btn, TweenInfo.new(0.2), {BackgroundTransparency = 0.5}):Play()
             local s = btn:FindFirstChildOfClass("UIStroke")
             if s then TweenService:Create(s, TweenInfo.new(0.2), {Transparency = 0.3, Thickness = 3}):Play() end
         end)
         btn.MouseLeave:Connect(function()
-            TweenService:Create(btn, TweenInfo.new(0.2), {BackgroundTransparency = origTrans, Size = origSize}):Play()
+            TweenService:Create(btn, TweenInfo.new(0.2), {BackgroundTransparency = origTrans}):Play()
             local s = btn:FindFirstChildOfClass("UIStroke")
             if s then TweenService:Create(s, TweenInfo.new(0.2), {Transparency = 0.7, Thickness = 2}):Play() end
         end)
@@ -497,7 +478,7 @@ local function main()
         if s then TweenService:Create(s, TweenInfo.new(0.2), {Transparency = 0.7, Thickness = 2}):Play() end
     end)
 
-    -- Glow animation for welcome text (optional, can be removed if you want no text at all)
+    -- Glow animation
     spawn(function()
         local glow = WelcomeText:FindFirstChildOfClass("UIStroke")
         if glow then
@@ -511,4 +492,4 @@ end
 
 -- Run
 main()
-print("✅ VIP Loader v5.0 loaded | Device:", isMobile() and "Mobile" or "Desktop")
+print("✅ VIP Loader v5.1 loaded | Device:", isMobile() and "Mobile" or "Desktop")
