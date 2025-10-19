@@ -520,13 +520,6 @@ local function main()
     }):Play()
     
     -- If VIP: Show maps immediately
-    if isVIP then
-        task.wait(0.5)
-        WelcomeText.Text = "SELECT MAP"
-        Subtitle.Text = "Choose your destination"
-        MapContainer.Visible = true
-        MapContainer.Position = UDim2.new(0.5, 0, 0, isMobile() and 75 or 100)
-    end
     
     -- Verify Key Button (FREE users only)
     VerifyButton.MouseButton1Click:Connect(function()
