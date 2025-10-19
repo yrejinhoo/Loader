@@ -9,14 +9,14 @@ local UserInputService = game:GetService("UserInputService")
 local LocalPlayer = Players.LocalPlayer
 local userId = LocalPlayer.UserId
 
--- GitHub URLs (Ganti dengan URL raw GitHub Anda)
-local GITHUB_KEY_URL = "https://raw.githubusercontent.com/yrejinhoo/Loader/refs/heads/main/key.txt"
-local GITHUB_VIP_URL = "https://raw.githubusercontent.com/yrejinhoo/Loader/refs/heads/main/vip.txt"
+-- GitHub URLs
+local GITHUB_VIP_URL = "https://raw.githubusercontent.com/yourusername/vip/main/vip.txt"
+local GITHUB_KEY_URL = "https://raw.githubusercontent.com/yourusername/keys/main/keys.txt"
 
 -- Map Scripts
 local MAP_SCRIPTS = {
-    Arunika = "https://raw.githubusercontent.com/yrejinhoo/AstrionHUB/refs/heads/main/arunika.lua",
-    Yahayuk = "https://raw.githubusercontent.com/yrejinhoo/AstrionHUB/refs/heads/main/main.lua"
+    Arunika = "https://raw.githubusercontent.com/yourusername/maps/main/arunika.lua",
+    Yahayuk = "https://raw.githubusercontent.com/yrejinhoo/Loader/refs/heads/main/Loader.lua"
 }
 
 -- Detect device type
@@ -33,9 +33,9 @@ local function fetchKeys()
     if success then
         local keys = {}
         for line in response:gmatch("[^\r\n]+") do
-            local key, expiry = line:match("([^|]+)|([^|]+)")
-            if key and expiry then
-                keys[key] = expiry
+            local key = line:match("^%s*(.-)%s*$")
+            if key ~= "" then
+                keys[key] = true
             end
         end
         return keys
@@ -43,23 +43,33 @@ local function fetchKeys()
     return {}
 end
 
--- Fetch VIP Users from GitHub
-local function fetchVIPs()
+-- Fetch VIP User IDs from GitHub
+local function fetchVIPIds()
     local success, response = pcall(function()
         return game:HttpGet(GITHUB_VIP_URL)
     end)
     
     if success then
-        local vips = {}
+        local vipIds = {}
         for line in response:gmatch("[^\r\n]+") do
-            local username = line:match("^%s*(.-)%s*$")
-            if username ~= "" then
-                vips[username:lower()] = true
+            local id = line:match("^%s*(.-)%s*$")
+            if id ~= "" and tonumber(id) then
+                table.insert(vipIds, tonumber(id))
             end
         end
-        return vips
+        return vipIds
     end
     return {}
+end
+
+-- Check if User is VIP
+local function isUserVIP(userId, vipIds)
+    for _, vipId in ipairs(vipIds) do
+        if userId == vipId then
+            return true
+        end
+    end
+    return false
 end
 
 -- Create ScreenGui
@@ -469,14 +479,15 @@ end
 
 -- Main Function
 local function main()
-    -- Auto-detect user type
-    local vips = fetchVIPs()
-    local playerName = LocalPlayer.Name:lower()
-    local isVIP = vips[playerName] or false
+    -- Fetch VIP User IDs dari GitHub
+    local vipIds = fetchVIPIds()
+    
+    -- Auto-detect user type using User ID
+    local isVIP = isUserVIP(userId, vipIds)
     
     print("User: " .. LocalPlayer.Name)
+    print("User ID: " .. userId)
     print("Status: " .. (isVIP and "VIP" or "FREE"))
-    print("UserID: " .. userId)
     
     local ScreenGui, MainFrame, Overlay, BlurEffect, AuthContainer, MapContainer, KeyInput, VerifyButton, StatusText, ArunikaButton, YahayukButton, WelcomeText, Subtitle = createLoader(isVIP, LocalPlayer.Name)
     
