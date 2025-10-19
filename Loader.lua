@@ -1,5 +1,4 @@
-
--- VIP Loader System
+-- VIP Loader System with Auto Detection
 -- Created with modern UI design
 
 local Players = game:GetService("Players")
@@ -25,8 +24,46 @@ local function isMobile()
     return UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled
 end
 
+-- Fetch Keys from GitHub
+local function fetchKeys()
+    local success, response = pcall(function()
+        return game:HttpGet(GITHUB_KEY_URL)
+    end)
+    
+    if success then
+        local keys = {}
+        for line in response:gmatch("[^\r\n]+") do
+            local key, expiry = line:match("([^|]+)|([^|]+)")
+            if key and expiry then
+                keys[key] = expiry
+            end
+        end
+        return keys
+    end
+    return {}
+end
+
+-- Fetch VIP Users from GitHub
+local function fetchVIPs()
+    local success, response = pcall(function()
+        return game:HttpGet(GITHUB_VIP_URL)
+    end)
+    
+    if success then
+        local vips = {}
+        for line in response:gmatch("[^\r\n]+") do
+            local username = line:match("^%s*(.-)%s*$")
+            if username ~= "" then
+                vips[username:lower()] = true
+            end
+        end
+        return vips
+    end
+    return {}
+end
+
 -- Create ScreenGui
-local function createLoader()
+local function createLoader(isVIP, playerName)
     local ScreenGui = Instance.new("ScreenGui")
     ScreenGui.Name = "VIPLoader"
     ScreenGui.ResetOnSpawn = false
@@ -51,7 +88,7 @@ local function createLoader()
     Overlay.ZIndex = 1
     Overlay.Parent = ScreenGui
 
-    -- Blur effect (if supported)
+    -- Blur effect
     local BlurEffect = Instance.new("BlurEffect")
     BlurEffect.Size = 10
     BlurEffect.Parent = game.Lighting
@@ -98,7 +135,7 @@ local function createLoader()
     local AvatarFrame = Instance.new("Frame")
     AvatarFrame.Name = "AvatarFrame"
     AvatarFrame.Size = UDim2.new(0, isMobile() and 80 or 120, 0, isMobile() and 80 or 120)
-    AvatarFrame.Position = UDim2.new(0.5, 0, 0, isMobile() and 25 : 40)
+    AvatarFrame.Position = UDim2.new(0.5, 0, 0, isMobile() and 25 or 40)
     AvatarFrame.AnchorPoint = Vector2.new(0.5, 0)
     AvatarFrame.BackgroundColor3 = Color3.fromRGB(93, 173, 226)
     AvatarFrame.BorderSizePixel = 0
@@ -126,16 +163,16 @@ local function createLoader()
     AvatarImgCorner.CornerRadius = UDim.new(0.25, 0)
     AvatarImgCorner.Parent = Avatar
 
-    -- Username
+    -- Username (Roblox Username)
     local Username = Instance.new("TextLabel")
     Username.Name = "Username"
-    Username.Size = UDim2.new(1, -20, 0, isMobile() and 25 : 30)
-    Username.Position = UDim2.new(0.5, 0, 0, isMobile() and 115 : 175)
+    Username.Size = UDim2.new(1, -20, 0, isMobile() and 25 or 30)
+    Username.Position = UDim2.new(0.5, 0, 0, isMobile() and 115 or 175)
     Username.AnchorPoint = Vector2.new(0.5, 0)
     Username.BackgroundTransparency = 1
-    Username.Text = "@" .. LocalPlayer.Name
+    Username.Text = "@" .. playerName
     Username.TextColor3 = Color3.fromRGB(255, 255, 255)
-    Username.TextSize = isMobile() and 12 : 16
+    Username.TextSize = isMobile() and 12 or 16
     Username.Font = Enum.Font.GothamBold
     Username.TextWrapped = true
     Username.Parent = LeftPanel
@@ -143,27 +180,16 @@ local function createLoader()
     -- Display Name
     local DisplayName = Instance.new("TextLabel")
     DisplayName.Name = "DisplayName"
-    DisplayName.Size = UDim2.new(1, -20, 0, isMobile() and 20 : 25)
-    DisplayName.Position = UDim2.new(0.5, 0, 0, isMobile() and 140 : 205)
+    DisplayName.Size = UDim2.new(1, -20, 0, isMobile() and 20 or 25)
+    DisplayName.Position = UDim2.new(0.5, 0, 0, isMobile() and 140 or 205)
     DisplayName.AnchorPoint = Vector2.new(0.5, 0)
     DisplayName.BackgroundTransparency = 1
     DisplayName.Text = LocalPlayer.DisplayName
     DisplayName.TextColor3 = Color3.fromRGB(160, 174, 192)
-    DisplayName.TextSize = isMobile() and 10 : 14
+    DisplayName.TextSize = isMobile() and 10 or 14
     DisplayName.Font = Enum.Font.Gotham
     DisplayName.TextWrapped = true
     DisplayName.Parent = LeftPanel
-
-    -- Logo Icon (Bottom)
-    local LogoIcon = Instance.new("TextLabel")
-    LogoIcon.Size = UDim2.new(1, 0, 0, isMobile() and 40 : 60)
-    LogoIcon.Position = UDim2.new(0.5, 0, 1, isMobile() and -50 : -70)
-    LogoIcon.AnchorPoint = Vector2.new(0.5, 0)
-    LogoIcon.BackgroundTransparency = 1
-    LogoIcon.Text = "🛡️"
-    LogoIcon.TextSize = isMobile() and 30 : 40
-    LogoIcon.Font = Enum.Font.GothamBold
-    LogoIcon.Parent = LeftPanel
 
     -- Right Panel (Auth & Maps)
     local RightPanel = Instance.new("Frame")
@@ -177,13 +203,13 @@ local function createLoader()
     -- Welcome Text
     local WelcomeText = Instance.new("TextLabel")
     WelcomeText.Name = "WelcomeText"
-    WelcomeText.Size = UDim2.new(1, -40, 0, isMobile() and 30 : 40)
-    WelcomeText.Position = UDim2.new(0.5, 0, 0, isMobile() and 15 : 25)
+    WelcomeText.Size = UDim2.new(1, -40, 0, isMobile() and 30 or 40)
+    WelcomeText.Position = UDim2.new(0.5, 0, 0, isMobile() and 15 or 25)
     WelcomeText.AnchorPoint = Vector2.new(0.5, 0)
     WelcomeText.BackgroundTransparency = 1
-    WelcomeText.Text = "WELCOME VIP"
+    WelcomeText.Text = isVIP and "WELCOME VIP" or "WELCOME FREE"
     WelcomeText.TextColor3 = Color3.fromRGB(255, 215, 0)
-    WelcomeText.TextSize = isMobile() and 20 : 28
+    WelcomeText.TextSize = isMobile() and 20 or 28
     WelcomeText.Font = Enum.Font.GothamBold
     WelcomeText.Parent = RightPanel
 
@@ -195,33 +221,34 @@ local function createLoader()
 
     -- Subtitle
     local Subtitle = Instance.new("TextLabel")
-    Subtitle.Size = UDim2.new(1, -40, 0, isMobile() and 15 : 20)
-    Subtitle.Position = UDim2.new(0.5, 0, 0, isMobile() and 45 : 65)
+    Subtitle.Size = UDim2.new(1, -40, 0, isMobile() and 15 or 20)
+    Subtitle.Position = UDim2.new(0.5, 0, 0, isMobile() and 45 or 65)
     Subtitle.AnchorPoint = Vector2.new(0.5, 0)
     Subtitle.BackgroundTransparency = 1
     Subtitle.Text = "Premium Access System"
     Subtitle.TextColor3 = Color3.fromRGB(160, 174, 192)
-    Subtitle.TextSize = isMobile() and 9 : 12
+    Subtitle.TextSize = isMobile() and 9 or 12
     Subtitle.Font = Enum.Font.Gotham
     Subtitle.Parent = RightPanel
 
-    -- Auth Container
+    -- Auth Container (Only for FREE users)
     local AuthContainer = Instance.new("Frame")
     AuthContainer.Name = "AuthContainer"
-    AuthContainer.Size = UDim2.new(1, -40, 0, isMobile() and 170 : 220)
-    AuthContainer.Position = UDim2.new(0.5, 0, 0, isMobile() and 75 : 100)
+    AuthContainer.Size = UDim2.new(1, -40, 0, isMobile() and 170 or 220)
+    AuthContainer.Position = UDim2.new(0.5, 0, 0, isMobile() and 75 or 100)
     AuthContainer.AnchorPoint = Vector2.new(0.5, 0)
     AuthContainer.BackgroundTransparency = 1
+    AuthContainer.Visible = not isVIP
     AuthContainer.Parent = RightPanel
 
     -- Key Input Label
     local KeyLabel = Instance.new("TextLabel")
-    KeyLabel.Size = UDim2.new(1, 0, 0, isMobile() and 15 : 20)
+    KeyLabel.Size = UDim2.new(1, 0, 0, isMobile() and 15 or 20)
     KeyLabel.Position = UDim2.new(0, 0, 0, 0)
     KeyLabel.BackgroundTransparency = 1
     KeyLabel.Text = "🔑 Enter Your Key"
     KeyLabel.TextColor3 = Color3.fromRGB(203, 213, 224)
-    KeyLabel.TextSize = isMobile() and 10 : 12
+    KeyLabel.TextSize = isMobile() and 10 or 12
     KeyLabel.Font = Enum.Font.Gotham
     KeyLabel.TextXAlignment = Enum.TextXAlignment.Left
     KeyLabel.Parent = AuthContainer
@@ -229,15 +256,15 @@ local function createLoader()
     -- Key Input Box
     local KeyInput = Instance.new("TextBox")
     KeyInput.Name = "KeyInput"
-    KeyInput.Size = UDim2.new(1, 0, 0, isMobile() and 35 : 45)
-    KeyInput.Position = UDim2.new(0, 0, 0, isMobile() and 20 : 25)
+    KeyInput.Size = UDim2.new(1, 0, 0, isMobile() and 35 or 45)
+    KeyInput.Position = UDim2.new(0, 0, 0, isMobile() and 20 or 25)
     KeyInput.BackgroundColor3 = Color3.fromRGB(26, 32, 58)
     KeyInput.BorderSizePixel = 0
     KeyInput.Text = ""
     KeyInput.PlaceholderText = "Enter 1-day key..."
     KeyInput.TextColor3 = Color3.fromRGB(255, 255, 255)
     KeyInput.PlaceholderColor3 = Color3.fromRGB(113, 128, 150)
-    KeyInput.TextSize = isMobile() and 11 : 14
+    KeyInput.TextSize = isMobile() and 11 or 14
     KeyInput.Font = Enum.Font.Gotham
     KeyInput.ClearTextOnFocus = false
     KeyInput.Parent = AuthContainer
@@ -252,16 +279,16 @@ local function createLoader()
     KeyInputStroke.Transparency = 0.7
     KeyInputStroke.Parent = KeyInput
 
-    -- Verify Key Button
+    -- Verify Key Button (Only for FREE users)
     local VerifyButton = Instance.new("TextButton")
     VerifyButton.Name = "VerifyButton"
-    VerifyButton.Size = UDim2.new(1, 0, 0, isMobile() and 35 : 45)
-    VerifyButton.Position = UDim2.new(0, 0, 0, isMobile() and 65 : 80)
+    VerifyButton.Size = UDim2.new(1, 0, 0, isMobile() and 35 or 45)
+    VerifyButton.Position = UDim2.new(0, 0, 0, isMobile() and 65 or 80)
     VerifyButton.BackgroundColor3 = Color3.fromRGB(255, 215, 0)
     VerifyButton.BorderSizePixel = 0
     VerifyButton.Text = "VERIFY KEY"
     VerifyButton.TextColor3 = Color3.fromRGB(10, 14, 39)
-    VerifyButton.TextSize = isMobile() and 11 : 14
+    VerifyButton.TextSize = isMobile() and 11 or 14
     VerifyButton.Font = Enum.Font.GothamBold
     VerifyButton.Parent = AuthContainer
 
@@ -269,68 +296,24 @@ local function createLoader()
     VerifyCorner.CornerRadius = UDim.new(0, 8)
     VerifyCorner.Parent = VerifyButton
 
-    -- VIP Access Button
-    local VIPButton = Instance.new("TextButton")
-    VIPButton.Name = "VIPButton"
-    VIPButton.Size = UDim2.new(1, 0, 0, isMobile() and 35 : 45)
-    VIPButton.Position = UDim2.new(0, 0, 0, isMobile() and 110 : 135)
-    VIPButton.BackgroundColor3 = Color3.fromRGB(93, 173, 226)
-    VIPButton.BorderSizePixel = 0
-    VIPButton.Text = "VIP ACCESS"
-    VIPButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-    VIPButton.TextSize = isMobile() and 11 : 14
-    VIPButton.Font = Enum.Font.GothamBold
-    VIPButton.Parent = AuthContainer
-
-    local VIPCorner = Instance.new("UICorner")
-    VIPCorner.CornerRadius = UDim.new(0, 8)
-    VIPCorner.Parent = VIPButton
-
     -- Status Message
     local StatusText = Instance.new("TextLabel")
     StatusText.Name = "StatusText"
-    StatusText.Size = UDim2.new(1, 0, 0, isMobile() and 20 : 25)
-    StatusText.Position = UDim2.new(0, 0, 0, isMobile() and 155 : 190)
+    StatusText.Size = UDim2.new(1, 0, 0, isMobile() and 20 or 25)
+    StatusText.Position = UDim2.new(0, 0, 0, isMobile() and 110 or 135)
     StatusText.BackgroundTransparency = 1
     StatusText.Text = ""
     StatusText.TextColor3 = Color3.fromRGB(231, 76, 60)
-    StatusText.TextSize = isMobile() and 9 : 11
+    StatusText.TextSize = isMobile() and 9 or 11
     StatusText.Font = Enum.Font.Gotham
     StatusText.Visible = false
     StatusText.Parent = AuthContainer
 
-    -- VIP Welcome Screen
-    local VIPWelcome = Instance.new("Frame")
-    VIPWelcome.Name = "VIPWelcome"
-    VIPWelcome.Size = UDim2.new(1, -40, 0, isMobile() and 150 : 200)
-    VIPWelcome.Position = UDim2.new(0.5, 0, 0.5, 0)
-    VIPWelcome.AnchorPoint = Vector2.new(0.5, 0.5)
-    VIPWelcome.BackgroundTransparency = 1
-    VIPWelcome.Visible = false
-    VIPWelcome.Parent = RightPanel
-
-    local VIPWelcomeText = Instance.new("TextLabel")
-    VIPWelcomeText.Size = UDim2.new(1, 0, 0, isMobile() and 50 : 70)
-    VIPWelcomeText.Position = UDim2.new(0.5, 0, 0.5, 0)
-    VIPWelcomeText.AnchorPoint = Vector2.new(0.5, 0.5)
-    VIPWelcomeText.BackgroundTransparency = 1
-    VIPWelcomeText.Text = "WELCOME\nVIP USER"
-    VIPWelcomeText.TextColor3 = Color3.fromRGB(255, 215, 0)
-    VIPWelcomeText.TextSize = isMobile() and 18 : 24
-    VIPWelcomeText.Font = Enum.Font.Code
-    VIPWelcomeText.Parent = VIPWelcome
-
-    local VIPWelcomeGlow = Instance.new("UIStroke")
-    VIPWelcomeGlow.Color = Color3.fromRGB(255, 215, 0)
-    VIPWelcomeGlow.Thickness = 2
-    VIPWelcomeGlow.Transparency = 0.3
-    VIPWelcomeGlow.Parent = VIPWelcomeText
-
     -- Map Selection Container
     local MapContainer = Instance.new("Frame")
     MapContainer.Name = "MapContainer"
-    MapContainer.Size = UDim2.new(1, -40, 0, isMobile() and 170 : 220)
-    MapContainer.Position = UDim2.new(0.5, 0, 0, isMobile() and 75 : 100)
+    MapContainer.Size = UDim2.new(1, -40, 0, isMobile() and 170 or 220)
+    MapContainer.Position = UDim2.new(0.5, 0, 0, isMobile() and 75 or 100)
     MapContainer.AnchorPoint = Vector2.new(0.5, 0)
     MapContainer.BackgroundTransparency = 1
     MapContainer.Visible = false
@@ -338,34 +321,34 @@ local function createLoader()
 
     -- Map Selection Title
     local MapTitle = Instance.new("TextLabel")
-    MapTitle.Size = UDim2.new(1, 0, 0, isMobile() and 25 : 35)
+    MapTitle.Size = UDim2.new(1, 0, 0, isMobile() and 25 or 35)
     MapTitle.BackgroundTransparency = 1
     MapTitle.Text = "SELECT MAP"
     MapTitle.TextColor3 = Color3.fromRGB(255, 215, 0)
-    MapTitle.TextSize = isMobile() and 16 : 22
+    MapTitle.TextSize = isMobile() and 16 or 22
     MapTitle.Font = Enum.Font.GothamBold
     MapTitle.Parent = MapContainer
 
     local MapSubtitle = Instance.new("TextLabel")
-    MapSubtitle.Size = UDim2.new(1, 0, 0, isMobile() and 15 : 20)
-    MapSubtitle.Position = UDim2.new(0, 0, 0, isMobile() and 25 : 35)
+    MapSubtitle.Size = UDim2.new(1, 0, 0, isMobile() and 15 or 20)
+    MapSubtitle.Position = UDim2.new(0, 0, 0, isMobile() and 25 or 35)
     MapSubtitle.BackgroundTransparency = 1
     MapSubtitle.Text = "Choose your destination"
     MapSubtitle.TextColor3 = Color3.fromRGB(160, 174, 192)
-    MapSubtitle.TextSize = isMobile() and 9 : 11
+    MapSubtitle.TextSize = isMobile() and 9 or 11
     MapSubtitle.Font = Enum.Font.Gotham
     MapSubtitle.Parent = MapContainer
 
     -- Map Buttons Container
     local MapsFrame = Instance.new("Frame")
-    MapsFrame.Size = UDim2.new(1, 0, 1, isMobile() and -45 : -60)
-    MapsFrame.Position = UDim2.new(0, 0, 0, isMobile() and 45 : 60)
+    MapsFrame.Size = UDim2.new(1, 0, 1, isMobile() and -45 or -60)
+    MapsFrame.Position = UDim2.new(0, 0, 0, isMobile() and 45 or 60)
     MapsFrame.BackgroundTransparency = 1
     MapsFrame.Parent = MapContainer
 
     local MapsLayout = Instance.new("UIGridLayout")
-    MapsLayout.CellSize = UDim2.new(0.48, 0, 0, isMobile() and 90 : 120)
-    MapsLayout.CellPadding = UDim2.new(0.04, 0, 0, isMobile() and 10 : 15)
+    MapsLayout.CellSize = UDim2.new(0.48, 0, 0, isMobile() and 90 or 120)
+    MapsLayout.CellPadding = UDim2.new(0.04, 0, 0, isMobile() and 10 or 15)
     MapsLayout.Parent = MapsFrame
 
     -- Arunika Map Button
@@ -388,21 +371,21 @@ local function createLoader()
     ArunikaStroke.Parent = ArunikaButton
 
     local ArunikaIcon = Instance.new("TextLabel")
-    ArunikaIcon.Size = UDim2.new(1, 0, 0, isMobile() and 35 : 50)
-    ArunikaIcon.Position = UDim2.new(0, 0, 0, isMobile() and 15 : 20)
+    ArunikaIcon.Size = UDim2.new(1, 0, 0, isMobile() and 35 or 50)
+    ArunikaIcon.Position = UDim2.new(0, 0, 0, isMobile() and 15 or 20)
     ArunikaIcon.BackgroundTransparency = 1
     ArunikaIcon.Text = "🗺️"
-    ArunikaIcon.TextSize = isMobile() and 25 : 35
+    ArunikaIcon.TextSize = isMobile() and 25 or 35
     ArunikaIcon.Font = Enum.Font.GothamBold
     ArunikaIcon.Parent = ArunikaButton
 
     local ArunikaText = Instance.new("TextLabel")
-    ArunikaText.Size = UDim2.new(1, 0, 0, isMobile() and 25 : 30)
-    ArunikaText.Position = UDim2.new(0, 0, 1, isMobile() and -30 : -35)
+    ArunikaText.Size = UDim2.new(1, 0, 0, isMobile() and 25 or 30)
+    ArunikaText.Position = UDim2.new(0, 0, 1, isMobile() and -30 or -35)
     ArunikaText.BackgroundTransparency = 1
     ArunikaText.Text = "ARUNIKA"
     ArunikaText.TextColor3 = Color3.fromRGB(255, 255, 255)
-    ArunikaText.TextSize = isMobile() and 12 : 16
+    ArunikaText.TextSize = isMobile() and 12 or 16
     ArunikaText.Font = Enum.Font.GothamBold
     ArunikaText.Parent = ArunikaButton
 
@@ -426,63 +409,25 @@ local function createLoader()
     YahayukStroke.Parent = YahayukButton
 
     local YahayukIcon = Instance.new("TextLabel")
-    YahayukIcon.Size = UDim2.new(1, 0, 0, isMobile() and 35 : 50)
-    YahayukIcon.Position = UDim2.new(0, 0, 0, isMobile() and 15 : 20)
+    YahayukIcon.Size = UDim2.new(1, 0, 0, isMobile() and 35 or 50)
+    YahayukIcon.Position = UDim2.new(0, 0, 0, isMobile() and 15 or 20)
     YahayukIcon.BackgroundTransparency = 1
     YahayukIcon.Text = "🌍"
-    YahayukIcon.TextSize = isMobile() and 25 : 35
+    YahayukIcon.TextSize = isMobile() and 25 or 35
     YahayukIcon.Font = Enum.Font.GothamBold
     YahayukIcon.Parent = YahayukButton
 
     local YahayukText = Instance.new("TextLabel")
-    YahayukText.Size = UDim2.new(1, 0, 0, isMobile() and 25 : 30)
-    YahayukText.Position = UDim2.new(0, 0, 1, isMobile() and -30 : -35)
+    YahayukText.Size = UDim2.new(1, 0, 0, isMobile() and 25 or 30)
+    YahayukText.Position = UDim2.new(0, 0, 1, isMobile() and -30 or -35)
     YahayukText.BackgroundTransparency = 1
     YahayukText.Text = "YAHAYUK"
     YahayukText.TextColor3 = Color3.fromRGB(255, 255, 255)
-    YahayukText.TextSize = isMobile() and 12 : 16
+    YahayukText.TextSize = isMobile() and 12 or 16
     YahayukText.Font = Enum.Font.GothamBold
     YahayukText.Parent = YahayukButton
 
-    return ScreenGui, MainFrame, Overlay, BlurEffect, AuthContainer, MapContainer, KeyInput, VerifyButton, VIPButton, StatusText, ArunikaButton, YahayukButton, VIPWelcome, WelcomeText, Subtitle
-end
-
--- Fetch Keys from GitHub
-local function fetchKeys()
-    local success, response = pcall(function()
-        return game:HttpGet(GITHUB_KEY_URL)
-    end)
-    
-    if success then
-        local keys = {}
-        for line in response:gmatch("[^\r\n]+") do
-            local key, expiry = line:match("([^|]+)|([^|]+)")
-            if key and expiry then
-                keys[key] = expiry
-            end
-        end
-        return keys
-    end
-    return {}
-end
-
--- Fetch VIP Users from GitHub
-local function fetchVIPs()
-    local success, response = pcall(function()
-        return game:HttpGet(GITHUB_VIP_URL)
-    end)
-    
-    if success then
-        local vips = {}
-        for line in response:gmatch("[^\r\n]+") do
-            local username = line:match("^%s*(.-)%s*$")
-            if username ~= "" then
-                vips[username:lower()] = true
-            end
-        end
-        return vips
-    end
-    return {}
+    return ScreenGui, MainFrame, Overlay, BlurEffect, AuthContainer, MapContainer, KeyInput, VerifyButton, StatusText, ArunikaButton, YahayukButton, WelcomeText, Subtitle
 end
 
 -- Show Status Message
@@ -524,18 +469,36 @@ end
 
 -- Main Function
 local function main()
-    local ScreenGui, MainFrame, Overlay, BlurEffect, AuthContainer, MapContainer, KeyInput, VerifyButton, VIPButton, StatusText, ArunikaButton, YahayukButton, VIPWelcome, WelcomeText, Subtitle = createLoader()
+    -- Auto-detect user type
+    local vips = fetchVIPs()
+    local playerName = LocalPlayer.Name:lower()
+    local isVIP = vips[playerName] or false
+    
+    print("User: " .. LocalPlayer.Name)
+    print("Status: " .. (isVIP and "VIP" or "FREE"))
+    print("UserID: " .. userId)
+    
+    local ScreenGui, MainFrame, Overlay, BlurEffect, AuthContainer, MapContainer, KeyInput, VerifyButton, StatusText, ArunikaButton, YahayukButton, WelcomeText, Subtitle = createLoader(isVIP, LocalPlayer.Name)
     
     -- Entrance Animation
     MainFrame.Size = UDim2.new(0, 0, 0, 0)
     MainFrame.BackgroundTransparency = 1
     
     TweenService:Create(MainFrame, TweenInfo.new(0.5, Enum.EasingStyle.Back), {
-        Size = UDim2.new(0, isMobile() and 350 : 600, 0, isMobile() and math.floor(350 / 16 * 9) : math.floor(600 / 16 * 9)),
+        Size = UDim2.new(0, isMobile() and 350 or 600, 0, isMobile() and math.floor(350 / 16 * 9) or math.floor(600 / 16 * 9)),
         BackgroundTransparency = 0
     }):Play()
     
-    -- Verify Key Button
+    -- If VIP: Show maps immediately
+    if isVIP then
+        task.wait(0.5)
+        WelcomeText.Text = "SELECT MAP"
+        Subtitle.Text = "Choose your destination"
+        MapContainer.Visible = true
+        MapContainer.Position = UDim2.new(0.5, 0, 0, isMobile() and 75 or 100)
+    end
+    
+    -- Verify Key Button (FREE users only)
     VerifyButton.MouseButton1Click:Connect(function()
         local key = KeyInput.Text
         
@@ -569,75 +532,10 @@ local function main()
             MapContainer.Position = UDim2.new(0.5, 0, 0, 400)
             
             TweenService:Create(MapContainer, TweenInfo.new(0.5, Enum.EasingStyle.Quad), {
-                Position = UDim2.new(0.5, 0, 0, isMobile() and 75 : 100)
+                Position = UDim2.new(0.5, 0, 0, isMobile() and 75 or 100)
             }):Play()
         else
             showStatus(StatusText, "✗ Invalid or expired key", false)
-        end
-    end)
-    
-    -- VIP Access Button
-    VIPButton.MouseButton1Click:Connect(function()
-        showStatus(StatusText, "⏳ Checking VIP status...", true)
-        StatusText.TextColor3 = Color3.fromRGB(255, 215, 0)
-        
-        task.wait(1)
-        
-        local vips = fetchVIPs()
-        local playerName = LocalPlayer.Name:lower()
-        
-        if vips[playerName] then
-            -- Hide auth container
-            TweenService:Create(AuthContainer, TweenInfo.new(0.3), {
-                Position = UDim2.new(0.5, 0, 0, -300)
-            }):Play()
-            
-            task.wait(0.3)
-            AuthContainer.Visible = false
-            
-            -- Show VIP Welcome with Minecraft font
-            VIPWelcome.Visible = true
-            VIPWelcome.Position = UDim2.new(0.5, 0, 0.5, -100)
-            
-            -- Pulse animation for VIP Welcome
-            local function pulseText()
-                for i = 1, 3 do
-                    TweenService:Create(VIPWelcome:FindFirstChild("TextLabel"), TweenInfo.new(0.5, Enum.EasingStyle.Quad), {
-                        TextSize = (isMobile() and 22 : 28)
-                    }):Play()
-                    task.wait(0.5)
-                    TweenService:Create(VIPWelcome:FindFirstChild("TextLabel"), TweenInfo.new(0.5, Enum.EasingStyle.Quad), {
-                        TextSize = (isMobile() and 18 : 24)
-                    }):Play()
-                    task.wait(0.5)
-                end
-            end
-            
-            pulseText()
-            
-            task.wait(1.5)
-            
-            -- Fade out VIP Welcome
-            TweenService:Create(VIPWelcome:FindFirstChild("TextLabel"), TweenInfo.new(0.3), {
-                TextTransparency = 1
-            }):Play()
-            
-            task.wait(0.3)
-            VIPWelcome.Visible = false
-            
-            -- Update title
-            WelcomeText.Text = "SELECT MAP"
-            Subtitle.Text = "Choose your destination"
-            
-            -- Show map selection
-            MapContainer.Visible = true
-            MapContainer.Position = UDim2.new(0.5, 0, 0, 400)
-            
-            TweenService:Create(MapContainer, TweenInfo.new(0.5, Enum.EasingStyle.Quad), {
-                Position = UDim2.new(0.5, 0, 0, isMobile() and 75 : 100)
-            }):Play()
-        else
-            showStatus(StatusText, "✗ VIP access denied", false)
         end
     end)
     
@@ -687,7 +585,6 @@ local function main()
     end
     
     addHoverEffect(VerifyButton)
-    addHoverEffect(VIPButton)
     addHoverEffect(ArunikaButton)
     addHoverEffect(YahayukButton)
     
@@ -714,19 +611,6 @@ local function main()
         end
     end)
     
-    -- Avatar rotation animation
-    local avatar = MainFrame:FindFirstChild("LeftPanel"):FindFirstChild("AvatarFrame")
-    if avatar then
-        spawn(function()
-            while avatar and avatar.Parent do
-                TweenService:Create(avatar:FindFirstChildOfClass("UIStroke"), TweenInfo.new(2, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut, -1, true), {
-                    Transparency = 0.3
-                }):Play()
-                task.wait(2)
-            end
-        end)
-    end
-    
     -- Glow effect for welcome text
     spawn(function()
         local glow = WelcomeText:FindFirstChildOfClass("UIStroke")
@@ -745,7 +629,4 @@ end
 main()
 
 print("VIP Loader initialized successfully!")
-print("Device: " .. (isMobile() and "Mobile" : "Desktop"))
-print("User: " .. LocalPlayer.Name)
-print("UserID: " .. userId)
- 
+print("Device: " .. (isMobile() and "Mobile" or "Desktop"))
