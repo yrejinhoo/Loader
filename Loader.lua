@@ -10,8 +10,8 @@ local LocalPlayer = Players.LocalPlayer
 local userId = LocalPlayer.UserId
 
 -- GitHub URLs (Ganti dengan URL raw GitHub Anda)
-local GITHUB_KEY_URL = "https://raw.githubusercontent.com/yrejinhoo/loader/refs/heads/main/key.txt"
-local GITHUB_VIP_URL = "https://raw.githubusercontent.com/yrejinhoo/loader/refs/heads/main/vip.txt"
+local GITHUB_KEY_URL = "https://raw.githubusercontent.com/yrejinhoo/Loader/refs/heads/main/key.txt"
+local GITHUB_VIP_URL = "https://raw.githubusercontent.com/yrejinhoo/Loader/refs/heads/main/vip.txt"
 
 -- Map Scripts
 local MAP_SCRIPTS = {
