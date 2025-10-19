@@ -1,4 +1,4 @@
--- VIP Loader System - FINAL FIX (No Double Text, Maps Always Visible After Verify)
+-- VIP Loader System - FINAL FIX (NO TEXT HEADERS, NO DOUBLE TEXT, MAPS ALWAYS VISIBLE)
 -- Connected to: https://astrion-keycrate.vercel.app/api/validate
 
 local Players = game:GetService("Players")
@@ -266,7 +266,7 @@ local function createLoader(isVIP, playerName)
     StatusText.Visible = false
     StatusText.Parent = AuthContainer
 
-    -- Map Container (NO DOUBLE TEXT!)
+    -- Map Container (NO TEXT AT ALL!)
     local MapContainer = Instance.new("Frame")
     MapContainer.Size = UDim2.new(1, -40, 1, isMobile() and -120 or -150)
     MapContainer.Position = UDim2.new(0.5, 0, 0, isMobile() and 75 or 100)
@@ -274,31 +274,6 @@ local function createLoader(isVIP, playerName)
     MapContainer.BackgroundTransparency = 1
     MapContainer.Visible = false  -- Default hidden
     MapContainer.Parent = RightPanel
-
-    -- SINGLE Header (no duplicate!)
-    local MapHeader = Instance.new("Frame")
-    MapHeader.Size = UDim2.new(1, 0, 0, isMobile() and 40 or 50)
-    MapHeader.BackgroundTransparency = 1
-    MapHeader.Parent = MapContainer
-
-    local MapTitle = Instance.new("TextLabel")
-    MapTitle.Size = UDim2.new(1, 0, 0, isMobile() and 20 or 25)
-    MapTitle.BackgroundTransparency = 1
-    MapTitle.Text = "SELECT MAP"
-    MapTitle.TextColor3 = Color3.fromRGB(255, 215, 0)
-    MapTitle.TextSize = isMobile() and 14 or 18
-    MapTitle.Font = Enum.Font.GothamBold
-    MapTitle.Parent = MapHeader
-
-    local MapSubtitle = Instance.new("TextLabel")
-    MapSubtitle.Size = UDim2.new(1, 0, 0, isMobile() and 12 or 15)
-    MapSubtitle.Position = UDim2.new(0, 0, 0, isMobile() and 22 or 28)
-    MapSubtitle.BackgroundTransparency = 1
-    MapSubtitle.Text = "Choose your destination"
-    MapSubtitle.TextColor3 = Color3.fromRGB(160, 174, 192)
-    MapSubtitle.TextSize = isMobile() and 8 or 10
-    MapSubtitle.Font = Enum.Font.Gotham
-    MapSubtitle.Parent = MapHeader
 
     -- Scrollable maps
     local MapsScrollFrame = Instance.new("ScrollingFrame")
@@ -430,13 +405,13 @@ local function main()
         BackgroundTransparency = 0
     }):Play()
 
-    -- If VIP or already validated, show map immediately
+    -- If VIP or already validated, show map immediately (NO TEXT HEADER!)
     if isVIP or alreadyValid then
         task.wait(0.5)
-        WelcomeText.Text = "SELECT MAP"
-        Subtitle.Text = "Choose your destination"
+        WelcomeText.Text = ""  -- Clear welcome text too if needed
+        Subtitle.Text = ""     -- Clear subtitle
+        AuthContainer.Visible = false
         MapContainer.Visible = true
-        -- Ensure maps are positioned correctly
         MapContainer.Position = UDim2.new(0.5, 0, 0, isMobile() and 75 or 100)
     end
 
@@ -458,12 +433,12 @@ local function main()
                 showStatus(StatusText, "✓ Access granted!", true)
                 task.wait(1.2)
 
-                -- Switch to map view
-                WelcomeText.Text = "SELECT MAP"
-                Subtitle.Text = "Choose your destination"
+                -- Switch to map view (NO TEXT!)
+                WelcomeText.Text = ""   -- Remove any remaining text
+                Subtitle.Text = ""      -- Remove subtitle
                 AuthContainer.Visible = false
                 MapContainer.Visible = true
-                MapContainer.Position = UDim2.new(0.5, 0, 0, isMobile() and 75 or 100) -- Reset position
+                MapContainer.Position = UDim2.new(0.5, 0, 0, isMobile() and 75 or 100)
 
                 -- Optional: Add slight fade-in animation for maps
                 MapContainer.BackgroundTransparency = 1
@@ -507,7 +482,7 @@ local function main()
         if s then TweenService:Create(s, TweenInfo.new(0.2), {Transparency = 0.7, Thickness = 2}):Play() end
     end)
 
-    -- Glow animation for welcome text
+    -- Glow animation for welcome text (optional, can be removed if you want no text at all)
     spawn(function()
         local glow = WelcomeText:FindFirstChildOfClass("UIStroke")
         if glow then
@@ -521,4 +496,4 @@ end
 
 -- Run
 main()
-print("✅ VIP Loader v3.0 loaded | Device:", isMobile() and "Mobile" or "Desktop")
+print("✅ VIP Loader v4.0 loaded | Device:", isMobile() and "Mobile" or "Desktop")
