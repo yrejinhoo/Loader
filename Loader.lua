@@ -35,8 +35,8 @@ local Config = {
     -- Key System Settings
     KeySystem = {
         enabled = true,
-        correctKey = "change", -- Change this to your key
-        keyLink = "xxx", -- Where to get key
+        correctKey = "change", -- Ganti dengan key Anda
+        keyLink = "xxx", -- Ganti dengan link key Anda
     },
     
     Profile = {
@@ -395,7 +395,7 @@ function Loader:CreateKeySystem(callback)
     overlay.Parent = gui
     
     local panelWidth = scaleSize(340, 480)
-    local panelHeight = scaleSize(460, 520)
+    local panelHeight = isWide and 420 or scaleSize(460, 520)
     local panel = Instance.new("Frame")
     panel.Size = UDim2.new(0, panelWidth, 0, panelHeight)
     panel.Position = UDim2.new(0.5, 0, 0.5, 0)
@@ -481,7 +481,7 @@ function Loader:CreateKeySystem(callback)
     local lockSize = scaleSize(80, 100)
     local lockContainer = Instance.new("Frame")
     lockContainer.Size = UDim2.new(0, lockSize, 0, lockSize)
-    lockContainer.Position = UDim2.new(0.5, 0, 0, scaleSize(120, 150))
+    lockContainer.Position = UDim2.new(0.5, 0, 0, scaleSize(100, 150))
     lockContainer.AnchorPoint = Vector2.new(0.5, 0)
     lockContainer.BackgroundColor3 = Color3.fromRGB(255, 120, 100)
     lockContainer.BackgroundTransparency = 0.2
@@ -503,7 +503,7 @@ function Loader:CreateKeySystem(callback)
     -- Title & Subtitle
     local title = Instance.new("TextLabel")
     title.Size = UDim2.new(1, -scaleSize(40, 60), 0, scaleSize(30, 35))
-    title.Position = UDim2.new(0, scaleSize(20, 30), 0, scaleSize(220, 270))
+    title.Position = UDim2.new(0, scaleSize(20, 30), 0, scaleSize(200, 270))
     title.BackgroundTransparency = 1
     title.Text = "Key Verification"
     title.TextSize = scaleSize(22, 26)
@@ -514,7 +514,7 @@ function Loader:CreateKeySystem(callback)
     
     local subtitle = Instance.new("TextLabel")
     subtitle.Size = UDim2.new(1, -scaleSize(40, 60), 0, scaleSize(24, 30))
-    subtitle.Position = UDim2.new(0, scaleSize(20, 30), 0, scaleSize(250, 305))
+    subtitle.Position = UDim2.new(0, scaleSize(20, 30), 0, scaleSize(230, 305))
     subtitle.BackgroundTransparency = 1
     subtitle.Text = "Enter your access key to continue"
     subtitle.TextSize = scaleSize(13, 15)
@@ -527,7 +527,7 @@ function Loader:CreateKeySystem(callback)
     local inputHeight = scaleSize(44, 54)
     local inputBg = Instance.new("Frame")
     inputBg.Size = UDim2.new(1, -scaleSize(40, 60), 0, inputHeight)
-    inputBg.Position = UDim2.new(0, scaleSize(20, 30), 0, scaleSize(290, 350))
+    inputBg.Position = UDim2.new(0, scaleSize(20, 30), 0, scaleSize(250, 350))
     inputBg.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
     inputBg.BackgroundTransparency = 0.3
     inputBg.ZIndex = 2
@@ -552,7 +552,7 @@ function Loader:CreateKeySystem(callback)
     -- Submit Button
     local submitBtn = Instance.new("TextButton")
     submitBtn.Size = UDim2.new(1, -scaleSize(40, 60), 0, inputHeight)
-    submitBtn.Position = UDim2.new(0, scaleSize(20, 30), 0, scaleSize(340, 420))
+    submitBtn.Position = UDim2.new(0, scaleSize(20, 30), 0, scaleSize(300, 420))
     submitBtn.Text = "Verify Key"
     submitBtn.Font = Enum.Font.GothamBold
     submitBtn.TextSize = scaleSize(16, 18)
@@ -586,11 +586,9 @@ function Loader:CreateKeySystem(callback)
     local btnWidth = math.min(textBounds.X + padding, scaleSize(280, 380))
 
     if isWide then
-        -- Wide screen (16:9+): centered, compact
         getKeyBtn.Size = UDim2.new(0, btnWidth, 0, scaleSize(30, 35))
         getKeyBtn.Position = UDim2.new(0.5, -btnWidth/2, 1, -scaleSize(45, 45))
     else
-        -- Mobile/portrait: full width
         getKeyBtn.Size = UDim2.new(1, -scaleSize(40, 60), 0, scaleSize(30, 35))
         getKeyBtn.Position = UDim2.new(0, scaleSize(20, 30), 1, -scaleSize(45, 45))
     end
@@ -598,7 +596,7 @@ function Loader:CreateKeySystem(callback)
     -- Error
     local errorMsg = Instance.new("TextLabel")
     errorMsg.Size = UDim2.new(1, -scaleSize(40, 60), 0, scaleSize(20, 25))
-    errorMsg.Position = UDim2.new(0, scaleSize(20, 30), 0, scaleSize(385, 478))
+    errorMsg.Position = UDim2.new(0, scaleSize(20, 30), 0, scaleSize(350, 478))
     errorMsg.BackgroundTransparency = 1
     errorMsg.Text = ""
     errorMsg.TextSize = scaleSize(12, 14)
@@ -634,9 +632,9 @@ function Loader:CreateKeySystem(callback)
         else
             errorMsg.Text = "❌ Invalid key! Try again."
             errorMsg.Visible = true
-            tween(inputBg, TweenInfo.new(0.1, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut, 0, true), {Position = UDim2.new(0, scaleSize(30, 40), 0, scaleSize(290, 350))})
+            tween(inputBg, TweenInfo.new(0.1, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut, 0, true), {Position = UDim2.new(0, scaleSize(30, 40), 0, scaleSize(250, 350))})
             wait(0.3)
-            inputBg.Position = UDim2.new(0, scaleSize(20, 30), 0, scaleSize(290, 350))
+            inputBg.Position = UDim2.new(0, scaleSize(20, 30), 0, scaleSize(250, 350))
         end
     end
     
@@ -660,7 +658,7 @@ function Loader:CreateMainUI()
     overlay.Parent = gui
 
     local panelWidth = scaleSize(340, 560)
-    local panelHeight = scaleSize(580, 680)
+    local panelHeight = isWide and 540 or scaleSize(580, 680)
     local panel = Instance.new("Frame")
     panel.Name = "Panel"
     panel.Size = UDim2.new(0, panelWidth, 0, panelHeight)
@@ -681,7 +679,7 @@ function Loader:CreateMainUI()
     contentFrame.ZIndex = 2
     contentFrame.Parent = panel
 
-    local headerHeight = scaleSize(80, 100)
+    local headerHeight = isWide and 70 or scaleSize(80, 100)
     local header = Instance.new("Frame")
     header.Name = "Header"
     header.BackgroundTransparency = 1
@@ -757,8 +755,8 @@ function Loader:CreateMainUI()
     local scroll = Instance.new("ScrollingFrame")
     scroll.Name = "Scroll"
     scroll.BackgroundTransparency = 1
-    scroll.Position = UDim2.new(0, scaleSize(15, 20), 0, headerHeight + scaleSize(20, 30))
-    scroll.Size = UDim2.new(1, -scaleSize(30, 40), 1, -scaleSize(140, 220))
+    scroll.Position = UDim2.new(0, scaleSize(15, 20), 0, headerHeight + scaleSize(15, 30))
+    scroll.Size = UDim2.new(1, -scaleSize(30, 40), 1, -scaleSize(120, 220))
     scroll.CanvasSize = UDim2.new(0, 0, 0, 0)
     scroll.ScrollBarThickness = 0
     scroll.ZIndex = 2
