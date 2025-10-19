@@ -1,6 +1,6 @@
 
 -------------------------------------------------------------
--- VIP LOADER SYSTEM - RULLZSYHUB (ENHANCED VERSION)
+-- VIP LOADER SYSTEM - RULLZSYHUB (FIXED VERSION)
 -- Created by RullzsyHUB
 -- Enhanced: Mobile Friendly, GitHub VIP List, Modern UI
 -------------------------------------------------------------
@@ -238,13 +238,6 @@ local function createAnimatedBackground(parent)
     ParticleContainer.Size = UDim2.new(1, 0, 1, 0)
     ParticleContainer.Parent = parent
     
-    -- Create animated gradient background
-    local gradientColors = {
-        Color3.fromRGB(15, 20, 30),
-        Color3.fromRGB(25, 15, 40),
-        Color3.fromRGB(15, 20, 30)
-    }
-    
     -- Floating particles with modern glow
     for i = 1, 20 do
         local particle = Instance.new("Frame")
@@ -292,7 +285,7 @@ local function createAnimatedBackground(parent)
 end
 
 -------------------------------------------------------------
--- MAIN LOADER GUI (MOBILE FRIENDLY)
+-- MAIN LOADER GUI (CENTERED & PROFILE ON SIDE)
 -------------------------------------------------------------
 local function createLoaderGUI()
     -- Remove existing GUI
@@ -317,37 +310,37 @@ local function createLoaderGUI()
     -- Animated background
     createAnimatedBackground(MainBG)
     
-    -- Center Container (Mobile Responsive)
+    -- Mobile detection
+    local screenSize = workspace.CurrentCamera.ViewportSize
+    local isMobile = screenSize.X < 600
+    
+    -- Center Container (CENTERED PROPERLY)
     local CenterFrame = Instance.new("Frame")
     CenterFrame.Name = "CenterFrame"
     CenterFrame.BackgroundTransparency = 1
     CenterFrame.AnchorPoint = Vector2.new(0.5, 0.5)
     CenterFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
     
-    -- Mobile responsive sizing
-    local screenSize = workspace.CurrentCamera.ViewportSize
-    local isMobile = screenSize.X < 600
-    
     if isMobile then
-        CenterFrame.Size = UDim2.new(0.9, 0, 0, 550)
+        CenterFrame.Size = UDim2.new(0.95, 0, 0, 450)
     else
-        CenterFrame.Size = UDim2.new(0, 420, 0, 600)
+        CenterFrame.Size = UDim2.new(0, 500, 0, 400)
     end
     
     CenterFrame.Parent = MainBG
     
-    -- Close Button (Modern Design)
+    -- Close Button (Top Right)
     local CloseBtn = Instance.new("TextButton")
     CloseBtn.Name = "CloseBtn"
     CloseBtn.BackgroundColor3 = CONFIG.COLORS.Error
     CloseBtn.BorderSizePixel = 0
     CloseBtn.AnchorPoint = Vector2.new(1, 0)
     CloseBtn.Position = UDim2.new(1, 0, 0, 0)
-    CloseBtn.Size = UDim2.new(0, 50, 0, 50)
+    CloseBtn.Size = UDim2.new(0, 45, 0, 45)
     CloseBtn.Font = Enum.Font.GothamBold
     CloseBtn.Text = "✕"
     CloseBtn.TextColor3 = CONFIG.COLORS.TextPrimary
-    CloseBtn.TextSize = 24
+    CloseBtn.TextSize = 22
     CloseBtn.Parent = CenterFrame
     
     local CloseBtnCorner = Instance.new("UICorner")
@@ -359,20 +352,19 @@ local function createLoaderGUI()
     -- Close button animation
     CloseBtn.MouseEnter:Connect(function()
         TweenService:Create(CloseBtn, TweenInfo.new(0.3, Enum.EasingStyle.Back), {
-            Size = UDim2.new(0, 55, 0, 55),
+            Size = UDim2.new(0, 50, 0, 50),
             Rotation = 90
         }):Play()
     end)
     
     CloseBtn.MouseLeave:Connect(function()
         TweenService:Create(CloseBtn, TweenInfo.new(0.3, Enum.EasingStyle.Back), {
-            Size = UDim2.new(0, 50, 0, 50),
+            Size = UDim2.new(0, 45, 0, 45),
             Rotation = 0
         }):Play()
     end)
     
     CloseBtn.MouseButton1Click:Connect(function()
-        -- Smooth close animation
         TweenService:Create(CenterFrame, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.In), {
             Size = UDim2.new(0, 0, 0, 0)
         }):Play()
@@ -382,15 +374,43 @@ local function createLoaderGUI()
         notify("Closed", "Loader closed successfully", 3)
     end)
     
-    -- Avatar Frame (Modern Card Design)
+    -- Left Side: Profile Card
+    local ProfileCard = Instance.new("Frame")
+    ProfileCard.Name = "ProfileCard"
+    ProfileCard.BackgroundColor3 = CONFIG.COLORS.CardBg
+    ProfileCard.BorderSizePixel = 0
+    ProfileCard.Position = UDim2.new(0, 0, 0, 0)
+    
+    if isMobile then
+        ProfileCard.Size = UDim2.new(1, 0, 0, 140)
+    else
+        ProfileCard.Size = UDim2.new(0, 180, 1, 0)
+    end
+    
+    ProfileCard.Parent = CenterFrame
+    
+    local ProfileCardCorner = Instance.new("UICorner")
+    ProfileCardCorner.CornerRadius = UDim.new(0, 20)
+    ProfileCardCorner.Parent = ProfileCard
+    
+    createStroke(ProfileCard, CONFIG.COLORS.Primary, 2)
+    
+    -- Avatar Frame (Inside Profile Card)
     local AvatarFrame = Instance.new("Frame")
     AvatarFrame.Name = "AvatarFrame"
-    AvatarFrame.BackgroundColor3 = CONFIG.COLORS.CardBg
+    AvatarFrame.BackgroundColor3 = CONFIG.COLORS.ButtonBg
     AvatarFrame.BorderSizePixel = 0
     AvatarFrame.AnchorPoint = Vector2.new(0.5, 0)
-    AvatarFrame.Position = UDim2.new(0.5, 0, 0, 60)
-    AvatarFrame.Size = UDim2.new(0, 140, 0, 140)
-    AvatarFrame.Parent = CenterFrame
+    
+    if isMobile then
+        AvatarFrame.Position = UDim2.new(0.5, 0, 0, 15)
+        AvatarFrame.Size = UDim2.new(0, 80, 0, 80)
+    else
+        AvatarFrame.Position = UDim2.new(0.5, 0, 0, 30)
+        AvatarFrame.Size = UDim2.new(0, 120, 0, 120)
+    end
+    
+    AvatarFrame.Parent = ProfileCard
     
     local AvatarCorner = Instance.new("UICorner")
     AvatarCorner.CornerRadius = UDim.new(0.3, 0)
@@ -408,8 +428,8 @@ local function createLoaderGUI()
     local Avatar = Instance.new("ImageLabel")
     Avatar.Name = "Avatar"
     Avatar.BackgroundTransparency = 1
-    Avatar.Size = UDim2.new(1, -12, 1, -12)
-    Avatar.Position = UDim2.new(0, 6, 0, 6)
+    Avatar.Size = UDim2.new(1, -10, 1, -10)
+    Avatar.Position = UDim2.new(0, 5, 0, 5)
     Avatar.Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. userId .. "&width=420&height=420&format=png"
     Avatar.Parent = AvatarFrame
     
@@ -428,17 +448,88 @@ local function createLoaderGUI()
         end
     end)
     
-    -- Welcome Text (Gradient Effect)
+    -- Username Text
+    local UsernameText = Instance.new("TextLabel")
+    UsernameText.Name = "UsernameText"
+    UsernameText.BackgroundTransparency = 1
+    
+    if isMobile then
+        UsernameText.Position = UDim2.new(0, 0, 0, 100)
+        UsernameText.Size = UDim2.new(1, 0, 0, 30)
+        UsernameText.TextSize = 14
+    else
+        UsernameText.Position = UDim2.new(0, 0, 0, 160)
+        UsernameText.Size = UDim2.new(1, 0, 0, 40)
+        UsernameText.TextSize = 16
+    end
+    
+    UsernameText.Font = Enum.Font.GothamBold
+    UsernameText.Text = "@" .. player.Name
+    UsernameText.TextColor3 = CONFIG.COLORS.TextPrimary
+    UsernameText.TextWrapped = true
+    UsernameText.Parent = ProfileCard
+    
+    -- Status Badge
+    local StatusBadge = Instance.new("Frame")
+    StatusBadge.Name = "StatusBadge"
+    StatusBadge.BackgroundColor3 = CONFIG.COLORS.Success
+    StatusBadge.BorderSizePixel = 0
+    
+    if isMobile then
+        StatusBadge.Position = UDim2.new(0.5, 30, 0, 75)
+    else
+        StatusBadge.Position = UDim2.new(0.5, 45, 0, 120)
+    end
+    
+    StatusBadge.Size = UDim2.new(0, 12, 0, 12)
+    StatusBadge.Parent = ProfileCard
+    
+    local StatusBadgeCorner = Instance.new("UICorner")
+    StatusBadgeCorner.CornerRadius = UDim.new(1, 0)
+    StatusBadgeCorner.Parent = StatusBadge
+    
+    -- Pulse animation for status badge
+    task.spawn(function()
+        while StatusBadge.Parent do
+            TweenService:Create(StatusBadge, TweenInfo.new(1, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {
+                Size = UDim2.new(0, 15, 0, 15),
+                BackgroundTransparency = 0.3
+            }):Play()
+            task.wait(1)
+            TweenService:Create(StatusBadge, TweenInfo.new(1, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {
+                Size = UDim2.new(0, 12, 0, 12),
+                BackgroundTransparency = 0
+            }):Play()
+            task.wait(1)
+        end
+    end)
+    
+    -- Right Side: Content Area
+    local ContentFrame = Instance.new("Frame")
+    ContentFrame.Name = "ContentFrame"
+    ContentFrame.BackgroundTransparency = 1
+    
+    if isMobile then
+        ContentFrame.Position = UDim2.new(0, 0, 0, 150)
+        ContentFrame.Size = UDim2.new(1, 0, 1, -150)
+    else
+        ContentFrame.Position = UDim2.new(0, 190, 0, 0)
+        ContentFrame.Size = UDim2.new(1, -190, 1, 0)
+    end
+    
+    ContentFrame.Parent = CenterFrame
+    
+    -- Welcome Text (In Content Area)
     local WelcomeText = Instance.new("TextLabel")
     WelcomeText.Name = "WelcomeText"
     WelcomeText.BackgroundTransparency = 1
-    WelcomeText.Position = UDim2.new(0, 0, 0, 220)
-    WelcomeText.Size = UDim2.new(1, 0, 0, 50)
+    WelcomeText.Position = UDim2.new(0, 0, 0, 10)
+    WelcomeText.Size = UDim2.new(1, 0, 0, 40)
     WelcomeText.Font = Enum.Font.GothamBold
     WelcomeText.Text = "WELCOME"
     WelcomeText.TextColor3 = CONFIG.COLORS.TextPrimary
-    WelcomeText.TextSize = isMobile and 24 or 28
-    WelcomeText.Parent = CenterFrame
+    WelcomeText.TextSize = isMobile and 20 or 24
+    WelcomeText.Parent = ContentFrame
     
     createGradient(WelcomeText, {
         CONFIG.COLORS.Primary,
@@ -446,39 +537,27 @@ local function createLoaderGUI()
         CONFIG.COLORS.Primary
     }, 0)
     
-    -- Username Text
-    local UsernameText = Instance.new("TextLabel")
-    UsernameText.Name = "UsernameText"
-    UsernameText.BackgroundTransparency = 1
-    UsernameText.Position = UDim2.new(0, 0, 0, 270)
-    UsernameText.Size = UDim2.new(1, 0, 0, 30)
-    UsernameText.Font = Enum.Font.Gotham
-    UsernameText.Text = "@" .. player.Name
-    UsernameText.TextColor3 = CONFIG.COLORS.TextSecondary
-    UsernameText.TextSize = isMobile and 16 or 18
-    UsernameText.Parent = CenterFrame
-    
     -- Entry animation
     CenterFrame.Size = UDim2.new(0, 0, 0, 0)
     TweenService:Create(CenterFrame, TweenInfo.new(0.7, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
-        Size = isMobile and UDim2.new(0.9, 0, 0, 550) or UDim2.new(0, 420, 0, 600)
+        Size = isMobile and UDim2.new(0.95, 0, 0, 450) or UDim2.new(0, 500, 0, 400)
     }):Play()
     
-    return ScreenGui, CenterFrame, WelcomeText, isMobile
+    return ScreenGui, ContentFrame, WelcomeText, isMobile, CenterFrame
 end
 
 -------------------------------------------------------------
--- KEY SYSTEM GUI (MODERN & MOBILE FRIENDLY)
+-- KEY SYSTEM GUI
 -------------------------------------------------------------
-local function createKeySystemGUI(centerFrame, isMobile)
+local function createKeySystemGUI(contentFrame, isMobile)
     -- Key Input Frame
     local KeyFrame = Instance.new("Frame")
     KeyFrame.Name = "KeyFrame"
     KeyFrame.BackgroundColor3 = CONFIG.COLORS.CardBg
     KeyFrame.BorderSizePixel = 0
-    KeyFrame.Position = UDim2.new(0, 0, 0, 320)
-    KeyFrame.Size = UDim2.new(1, 0, 0, 220)
-    KeyFrame.Parent = centerFrame
+    KeyFrame.Position = UDim2.new(0, 0, 0, 60)
+    KeyFrame.Size = UDim2.new(1, 0, 0, 200)
+    KeyFrame.Parent = contentFrame
     
     local KeyFrameCorner = Instance.new("UICorner")
     KeyFrameCorner.CornerRadius = UDim.new(0, 20)
@@ -490,31 +569,31 @@ local function createKeySystemGUI(centerFrame, isMobile)
     local KeyTitle = Instance.new("TextLabel")
     KeyTitle.BackgroundTransparency = 1
     KeyTitle.Position = UDim2.new(0, 0, 0, 15)
-    KeyTitle.Size = UDim2.new(1, 0, 0, 30)
+    KeyTitle.Size = UDim2.new(1, 0, 0, 25)
     KeyTitle.Font = Enum.Font.GothamBold
     KeyTitle.Text = "🔑 Enter Access Key"
     KeyTitle.TextColor3 = CONFIG.COLORS.TextPrimary
-    KeyTitle.TextSize = isMobile and 18 or 20
+    KeyTitle.TextSize = isMobile and 16 or 18
     KeyTitle.Parent = KeyFrame
     
-    -- Key Input Box (Modern Design)
+    -- Key Input Box
     local KeyInput = Instance.new("TextBox")
     KeyInput.Name = "KeyInput"
     KeyInput.BackgroundColor3 = CONFIG.COLORS.ButtonBg
     KeyInput.BorderSizePixel = 0
-    KeyInput.Position = UDim2.new(0.05, 0, 0, 55)
-    KeyInput.Size = UDim2.new(0.9, 0, 0, 45)
+    KeyInput.Position = UDim2.new(0.05, 0, 0, 50)
+    KeyInput.Size = UDim2.new(0.9, 0, 0, 40)
     KeyInput.Font = Enum.Font.Gotham
     KeyInput.PlaceholderText = "Paste your key here..."
     KeyInput.PlaceholderColor3 = CONFIG.COLORS.TextSecondary
     KeyInput.Text = ""
     KeyInput.TextColor3 = CONFIG.COLORS.TextPrimary
-    KeyInput.TextSize = isMobile and 14 or 16
+    KeyInput.TextSize = isMobile and 13 or 15
     KeyInput.ClearTextOnFocus = false
     KeyInput.Parent = KeyFrame
     
     local KeyInputCorner = Instance.new("UICorner")
-    KeyInputCorner.CornerRadius = UDim.new(0, 12)
+    KeyInputCorner.CornerRadius = UDim.new(0, 10)
     KeyInputCorner.Parent = KeyInput
     
     createStroke(KeyInput, CONFIG.COLORS.Primary, 1)
@@ -534,21 +613,21 @@ local function createKeySystemGUI(centerFrame, isMobile)
         }):Play()
     end)
     
-    -- Submit Button (Modern Gradient)
+    -- Submit Button
     local SubmitBtn = Instance.new("TextButton")
     SubmitBtn.Name = "SubmitBtn"
     SubmitBtn.BackgroundColor3 = CONFIG.COLORS.Success
     SubmitBtn.BorderSizePixel = 0
-    SubmitBtn.Position = UDim2.new(0.05, 0, 0, 110)
-    SubmitBtn.Size = UDim2.new(0.9, 0, 0, 45)
+    SubmitBtn.Position = UDim2.new(0.05, 0, 0, 100)
+    SubmitBtn.Size = UDim2.new(0.9, 0, 0, 40)
     SubmitBtn.Font = Enum.Font.GothamBold
     SubmitBtn.Text = "✓ SUBMIT KEY"
     SubmitBtn.TextColor3 = CONFIG.COLORS.TextPrimary
-    SubmitBtn.TextSize = isMobile and 16 or 18
+    SubmitBtn.TextSize = isMobile and 14 or 16
     SubmitBtn.Parent = KeyFrame
     
     local SubmitBtnCorner = Instance.new("UICorner")
-    SubmitBtnCorner.CornerRadius = UDim.new(0, 12)
+    SubmitBtnCorner.CornerRadius = UDim.new(0, 10)
     SubmitBtnCorner.Parent = SubmitBtn
     
     createGradient(SubmitBtn, {
@@ -563,16 +642,16 @@ local function createKeySystemGUI(centerFrame, isMobile)
     GetKeyBtn.Name = "GetKeyBtn"
     GetKeyBtn.BackgroundColor3 = CONFIG.COLORS.Primary
     GetKeyBtn.BorderSizePixel = 0
-    GetKeyBtn.Position = UDim2.new(0.05, 0, 0, 165)
-    GetKeyBtn.Size = UDim2.new(0.9, 0, 0, 40)
+    GetKeyBtn.Position = UDim2.new(0.05, 0, 0, 150)
+    GetKeyBtn.Size = UDim2.new(0.9, 0, 0, 35)
     GetKeyBtn.Font = Enum.Font.GothamBold
     GetKeyBtn.Text = "🔗 GET KEY FROM DISCORD"
     GetKeyBtn.TextColor3 = CONFIG.COLORS.TextPrimary
-    GetKeyBtn.TextSize = isMobile and 14 or 16
+    GetKeyBtn.TextSize = isMobile and 12 or 14
     GetKeyBtn.Parent = KeyFrame
     
     local GetKeyBtnCorner = Instance.new("UICorner")
-    GetKeyBtnCorner.CornerRadius = UDim.new(0, 12)
+    GetKeyBtnCorner.CornerRadius = UDim.new(0, 10)
     GetKeyBtnCorner.Parent = GetKeyBtn
     
     createGradient(GetKeyBtn, {
@@ -602,12 +681,12 @@ local function createKeySystemGUI(centerFrame, isMobile)
 end
 
 -------------------------------------------------------------
--- MAP SELECTION GUI (MODERN & MOBILE FRIENDLY)
+-- MAP SELECTION GUI
 -------------------------------------------------------------
-local function createMapSelectionGUI(centerFrame, isMobile)
-    -- Clear previous content
-    for _, child in ipairs(centerFrame:GetChildren()) do
-        if child.Name ~= "AvatarFrame" and child.Name ~= "WelcomeText" and child.Name ~= "UsernameText" and child.Name ~= "CloseBtn" then
+local function createMapSelectionGUI(contentFrame, isMobile)
+    -- Clear previous content except WelcomeText
+    for _, child in ipairs(contentFrame:GetChildren()) do
+        if child.Name ~= "WelcomeText" then
             child:Destroy()
         end
     end
@@ -617,12 +696,12 @@ local function createMapSelectionGUI(centerFrame, isMobile)
     MapsScrollFrame.Name = "MapsScrollFrame"
     MapsScrollFrame.BackgroundColor3 = CONFIG.COLORS.CardBg
     MapsScrollFrame.BorderSizePixel = 0
-    MapsScrollFrame.Position = UDim2.new(0, 0, 0, 320)
-    MapsScrollFrame.Size = UDim2.new(1, 0, 0, 220)
-    MapsScrollFrame.CanvasSize = UDim2.new(0, 0, 0, #CONFIG.MAPS * 90)
+    MapsScrollFrame.Position = UDim2.new(0, 0, 0, 60)
+    MapsScrollFrame.Size = UDim2.new(1, 0, 1, -70)
+    MapsScrollFrame.CanvasSize = UDim2.new(0, 0, 0, #CONFIG.MAPS * 85)
     MapsScrollFrame.ScrollBarThickness = 4
     MapsScrollFrame.ScrollBarImageColor3 = CONFIG.COLORS.Primary
-    MapsScrollFrame.Parent = centerFrame
+    MapsScrollFrame.Parent = contentFrame
     
     local MapsCorner = Instance.new("UICorner")
     MapsCorner.CornerRadius = UDim.new(0, 20)
@@ -632,31 +711,31 @@ local function createMapSelectionGUI(centerFrame, isMobile)
     
     local MapsList = Instance.new("UIListLayout")
     MapsList.SortOrder = Enum.SortOrder.LayoutOrder
-    MapsList.Padding = UDim.new(0, 12)
+    MapsList.Padding = UDim.new(0, 10)
     MapsList.Parent = MapsScrollFrame
     
-    local MapsPadding = Instance.new("UIPadding")
-    MapsPadding.PaddingTop = UDim.new(0, 12)
-    MapsPadding.PaddingBottom = UDim.new(0, 12)
-    MapsPadding.PaddingLeft = UDim.new(0, 12)
-    MapsPadding.PaddingRight = UDim.new(0, 12)
+    local MapsPadding = Instance.new("UIPadding")    
+    MapsPadding.PaddingTop = UDim.new(0, 10)
+    MapsPadding.PaddingBottom = UDim.new(0, 10)
+    MapsPadding.PaddingLeft = UDim.new(0, 10)
+    MapsPadding.PaddingRight = UDim.new(0, 10)
     MapsPadding.Parent = MapsScrollFrame
     
-    -- Create map buttons (Modern Cards)
+    -- Create map buttons
     for i, map in ipairs(CONFIG.MAPS) do
         local MapBtn = Instance.new("TextButton")
         MapBtn.Name = "MapBtn" .. i
         MapBtn.BackgroundColor3 = CONFIG.COLORS.ButtonBg
         MapBtn.BorderSizePixel = 0
-        MapBtn.Size = UDim2.new(1, -24, 0, 70)
+        MapBtn.Size = UDim2.new(1, -20, 0, 65)
         MapBtn.Font = Enum.Font.GothamBold
         MapBtn.Text = ""
         MapBtn.TextColor3 = CONFIG.COLORS.TextPrimary
-        MapBtn.TextSize = isMobile and 16 or 18
+        MapBtn.TextSize = isMobile and 14 or 16
         MapBtn.Parent = MapsScrollFrame
         
         local MapBtnCorner = Instance.new("UICorner")
-        MapBtnCorner.CornerRadius = UDim.new(0, 15)
+        MapBtnCorner.CornerRadius = UDim.new(0, 12)
         MapBtnCorner.Parent = MapBtn
         
         createStroke(MapBtn, CONFIG.COLORS.Primary, 2)
@@ -669,13 +748,13 @@ local function createMapSelectionGUI(centerFrame, isMobile)
         local IconFrame = Instance.new("Frame")
         IconFrame.BackgroundColor3 = CONFIG.COLORS.Primary
         IconFrame.BorderSizePixel = 0
-        IconFrame.Position = UDim2.new(0, 10, 0.5, 0)
+        IconFrame.Position = UDim2.new(0, 8, 0.5, 0)
         IconFrame.AnchorPoint = Vector2.new(0, 0.5)
-        IconFrame.Size = UDim2.new(0, 50, 0, 50)
+        IconFrame.Size = UDim2.new(0, 45, 0, 45)
         IconFrame.Parent = MapBtn
         
         local IconFrameCorner = Instance.new("UICorner")
-        IconFrameCorner.CornerRadius = UDim.new(0, 12)
+        IconFrameCorner.CornerRadius = UDim.new(0, 10)
         IconFrameCorner.Parent = IconFrame
         
         addGlowEffect(IconFrame)
@@ -686,30 +765,30 @@ local function createMapSelectionGUI(centerFrame, isMobile)
         Icon.Size = UDim2.new(1, 0, 1, 0)
         Icon.Font = Enum.Font.GothamBold
         Icon.Text = map.icon
-        Icon.TextSize = 28
+        Icon.TextSize = 24
         Icon.Parent = IconFrame
         
         -- Map Name
         local MapName = Instance.new("TextLabel")
         MapName.BackgroundTransparency = 1
-        MapName.Position = UDim2.new(0, 70, 0, 10)
-        MapName.Size = UDim2.new(1, -80, 0, 25)
+        MapName.Position = UDim2.new(0, 60, 0, 8)
+        MapName.Size = UDim2.new(1, -70, 0, 22)
         MapName.Font = Enum.Font.GothamBold
         MapName.Text = map.name
         MapName.TextColor3 = CONFIG.COLORS.TextPrimary
-        MapName.TextSize = isMobile and 14 or 16
+        MapName.TextSize = isMobile and 13 or 15
         MapName.TextXAlignment = Enum.TextXAlignment.Left
         MapName.Parent = MapBtn
         
         -- Description
         local Desc = Instance.new("TextLabel")
         Desc.BackgroundTransparency = 1
-        Desc.Position = UDim2.new(0, 70, 0, 35)
-        Desc.Size = UDim2.new(1, -80, 0, 25)
+        Desc.Position = UDim2.new(0, 60, 0, 32)
+        Desc.Size = UDim2.new(1, -70, 0, 20)
         Desc.Font = Enum.Font.Gotham
         Desc.Text = map.description
         Desc.TextColor3 = CONFIG.COLORS.TextSecondary
-        Desc.TextSize = isMobile and 12 or 14
+        Desc.TextSize = isMobile and 11 or 12
         Desc.TextXAlignment = Enum.TextXAlignment.Left
         Desc.Parent = MapBtn
         
@@ -718,7 +797,7 @@ local function createMapSelectionGUI(centerFrame, isMobile)
         StatusBadge.BackgroundColor3 = map.url == "" and CONFIG.COLORS.Error or CONFIG.COLORS.Success
         StatusBadge.BorderSizePixel = 0
         StatusBadge.AnchorPoint = Vector2.new(1, 0)
-        StatusBadge.Position = UDim2.new(1, -10, 0, 10)
+        StatusBadge.Position = UDim2.new(1, -8, 0, 8)
         StatusBadge.Size = UDim2.new(0, 8, 0, 8)
         StatusBadge.Parent = MapBtn
         
@@ -733,10 +812,12 @@ local function createMapSelectionGUI(centerFrame, isMobile)
                 
                 -- Shake animation
                 local originalPos = MapBtn.Position
-                TweenService:Create(MapBtn, TweenInfo.new(0.1), {Position = originalPos + UDim2.new(0, 10, 0, 0)}):Play()
-                task.wait(0.1)
-                TweenService:Create(MapBtn, TweenInfo.new(0.1), {Position = originalPos - UDim2.new(0, 10, 0, 0)}):Play()
-                task.wait(0.1)
+                for j = 1, 2 do
+                    TweenService:Create(MapBtn, TweenInfo.new(0.1), {Position = originalPos + UDim2.new(0, 5, 0, 0)}):Play()
+                    task.wait(0.1)
+                    TweenService:Create(MapBtn, TweenInfo.new(0.1), {Position = originalPos - UDim2.new(0, 5, 0, 0)}):Play()
+                    task.wait(0.1)
+                end
                 TweenService:Create(MapBtn, TweenInfo.new(0.1), {Position = originalPos}):Play()
             else
                 notify("Loading...", "Loading " .. map.name .. "... ⏳", 3)
@@ -746,8 +827,8 @@ local function createMapSelectionGUI(centerFrame, isMobile)
                 MapName.Text = "Loading..."
                 
                 task.spawn(function()
-                    for i = 1, 3 do
-                        MapName.Text = "Loading" .. string.rep(".", i)
+                    for j = 1, 3 do
+                        MapName.Text = "Loading" .. string.rep(".", j)
                         task.wait(0.3)
                     end
                 end)
@@ -768,15 +849,19 @@ local function createMapSelectionGUI(centerFrame, isMobile)
                     
                     task.wait(1)
                     
-                    -- Close with animation
-                    TweenService:Create(centerFrame, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.In), {
-                        Size = UDim2.new(0, 0, 0, 0)
-                    }):Play()
-                    
-                    task.wait(0.5)
-                    centerFrame.Parent.Parent:Destroy()
+                    -- Close GUI
+                    local mainGui = MapBtn:FindFirstAncestorOfClass("ScreenGui")
+                    if mainGui then
+                        local centerFrame = mainGui.MainBG.CenterFrame
+                        TweenService:Create(centerFrame, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.In), {
+                            Size = UDim2.new(0, 0, 0, 0)
+                        }):Play()
+                        
+                        task.wait(0.5)
+                        mainGui:Destroy()
+                    end
                 else
-                    notify("Error! ✕", "Failed to load " .. map.name .. ": " .. tostring(err), 5)
+                    notify("Error! ✕", "Failed to load " .. map.name, 5)
                     MapName.Text = originalText
                     
                     -- Error animation
@@ -793,11 +878,10 @@ local function createMapSelectionGUI(centerFrame, isMobile)
             end
         end)
         
-        -- Modern hover effect with scale and glow
+        -- Modern hover effect
         MapBtn.MouseEnter:Connect(function()
             TweenService:Create(MapBtn, TweenInfo.new(0.3, Enum.EasingStyle.Back), {
-                Size = UDim2.new(1, -20, 0, 75),
-                Position = MapBtn.Position - UDim2.new(0, 2, 0, 2.5)
+                Size = UDim2.new(1, -16, 0, 70)
             }):Play()
             
             TweenService:Create(MapBtn:FindFirstChildOfClass("UIStroke"), TweenInfo.new(0.3), {
@@ -808,15 +892,14 @@ local function createMapSelectionGUI(centerFrame, isMobile)
             if MapBtn:FindFirstChild("IconFrame") then
                 TweenService:Create(MapBtn.IconFrame, TweenInfo.new(0.3, Enum.EasingStyle.Back), {
                     Rotation = 15,
-                    Size = UDim2.new(0, 55, 0, 55)
+                    Size = UDim2.new(0, 50, 0, 50)
                 }):Play()
             end
         end)
         
         MapBtn.MouseLeave:Connect(function()
             TweenService:Create(MapBtn, TweenInfo.new(0.3, Enum.EasingStyle.Back), {
-                Size = UDim2.new(1, -24, 0, 70),
-                Position = MapBtn.Position + UDim2.new(0, 2, 0, 2.5)
+                Size = UDim2.new(1, -20, 0, 65)
             }):Play()
             
             TweenService:Create(MapBtn:FindFirstChildOfClass("UIStroke"), TweenInfo.new(0.3), {
@@ -827,19 +910,19 @@ local function createMapSelectionGUI(centerFrame, isMobile)
             if MapBtn:FindFirstChild("IconFrame") then
                 TweenService:Create(MapBtn.IconFrame, TweenInfo.new(0.3, Enum.EasingStyle.Back), {
                     Rotation = 0,
-                    Size = UDim2.new(0, 50, 0, 50)
+                    Size = UDim2.new(0, 45, 0, 45)
                 }):Play()
             end
         end)
         
         -- Entry animation (staggered)
-        MapBtn.Size = UDim2.new(0, 0, 0, 70)
+        MapBtn.Size = UDim2.new(0, 0, 0, 65)
         MapBtn.BackgroundTransparency = 1
         
         task.wait(i * 0.1)
         
         TweenService:Create(MapBtn, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
-            Size = UDim2.new(1, -24, 0, 70),
+            Size = UDim2.new(1, -20, 0, 65),
             BackgroundTransparency = 0
         }):Play()
     end
@@ -851,7 +934,7 @@ end
 local function startLoader()
     notify("RullzsyHUB", "Initializing loader... 🚀", 3)
     
-    local ScreenGui, CenterFrame, WelcomeText, isMobile = createLoaderGUI()
+    local ScreenGui, ContentFrame, WelcomeText, isMobile, CenterFrame = createLoaderGUI()
     
     -- Check VIP status from GitHub
     task.wait(1)
@@ -863,7 +946,7 @@ local function startLoader()
         WelcomeText.Text = "VIP ACCESS GRANTED"
         
         -- VIP gradient animation
-        createGradient(WelcomeText, {
+        local gradient = createGradient(WelcomeText, {
             Color3.fromRGB(255, 215, 0),
             Color3.fromRGB(255, 165, 0),
             Color3.fromRGB(255, 215, 0)
@@ -871,20 +954,17 @@ local function startLoader()
         
         -- Animate gradient rotation
         task.spawn(function()
-            local gradient = WelcomeText:FindFirstChildOfClass("UIGradient")
-            if gradient then
-                while gradient.Parent do
-                    TweenService:Create(gradient, TweenInfo.new(2, Enum.EasingStyle.Linear), {
-                        Rotation = 360
-                    }):Play()
-                    task.wait(2)
-                    gradient.Rotation = 0
-                end
+            while gradient.Parent do
+                TweenService:Create(gradient, TweenInfo.new(2, Enum.EasingStyle.Linear), {
+                    Rotation = 360
+                }):Play()
+                task.wait(2)
+                gradient.Rotation = 0
             end
         end)
         
         task.wait(2)
-        createMapSelectionGUI(CenterFrame, isMobile)
+        createMapSelectionGUI(ContentFrame, isMobile)
     else
         -- Check for saved key first
         local hasValidKey, message = checkSavedKey()
@@ -893,23 +973,23 @@ local function startLoader()
             notify("Key Valid ✓", message, 5)
             WelcomeText.Text = "ACCESS GRANTED"
             
-            createGradient(WelcomeText, {
+            local gradient = createGradient(WelcomeText, {
                 Color3.fromRGB(40, 200, 80),
                 Color3.fromRGB(60, 220, 100)
             }, 0)
             
             task.wait(2)
-            createMapSelectionGUI(CenterFrame, isMobile)
+            createMapSelectionGUI(ContentFrame, isMobile)
         else
             -- Show key system
             WelcomeText.Text = "KEY REQUIRED"
             
-            createGradient(WelcomeText, {
+            local gradient = createGradient(WelcomeText, {
                 CONFIG.COLORS.Error,
                 Color3.fromRGB(255, 100, 100)
             }, 0)
             
-            local KeyInput, SubmitBtn, GetKeyBtn = createKeySystemGUI(CenterFrame, isMobile)
+            local KeyInput, SubmitBtn, GetKeyBtn = createKeySystemGUI(ContentFrame, isMobile)
             
             -- Submit button logic
             SubmitBtn.MouseButton1Click:Connect(function()
@@ -920,10 +1000,12 @@ local function startLoader()
                     
                     -- Shake animation for input
                     local originalPos = KeyInput.Position
-                    TweenService:Create(KeyInput, TweenInfo.new(0.1), {Position = originalPos + UDim2.new(0, 10, 0, 0)}):Play()
-                    task.wait(0.1)
-                    TweenService:Create(KeyInput, TweenInfo.new(0.1), {Position = originalPos - UDim2.new(0, 10, 0, 0)}):Play()
-                    task.wait(0.1)
+                    for j = 1, 2 do
+                        TweenService:Create(KeyInput, TweenInfo.new(0.1), {Position = originalPos + UDim2.new(0, 5, 0, 0)}):Play()
+                        task.wait(0.1)
+                        TweenService:Create(KeyInput, TweenInfo.new(0.1), {Position = originalPos - UDim2.new(0, 5, 0, 0)}):Play()
+                        task.wait(0.1)
+                    end
                     TweenService:Create(KeyInput, TweenInfo.new(0.1), {Position = originalPos}):Play()
                     return
                 end
@@ -946,7 +1028,7 @@ local function startLoader()
                     SubmitBtn.Rotation = 0
                 end)
                 
-                task.wait(1) -- Simulate validation delay
+                task.wait(1)
                 
                 local valid, msg = validateKey(inputKey)
                 
@@ -959,13 +1041,13 @@ local function startLoader()
                     
                     -- Success animation
                     TweenService:Create(SubmitBtn, TweenInfo.new(0.3, Enum.EasingStyle.Back), {
-                        Size = SubmitBtn.Size + UDim2.new(0, 0, 0, 10)
+                        Size = SubmitBtn.Size + UDim2.new(0, 0, 0, 8)
                     }):Play()
                     
                     task.wait(1)
                     
                     -- Transition to maps
-                    createMapSelectionGUI(CenterFrame, isMobile)
+                    createMapSelectionGUI(ContentFrame, isMobile)
                 else
                     notify("Error! ✕", msg, 5)
                     
@@ -974,7 +1056,7 @@ local function startLoader()
                     
                     -- Error shake
                     local originalPos = SubmitBtn.Position
-                    for i = 1, 3 do
+                    for j = 1, 3 do
                         TweenService:Create(SubmitBtn, TweenInfo.new(0.1), {Position = originalPos + UDim2.new(0, 5, 0, 0)}):Play()
                         task.wait(0.1)
                         TweenService:Create(SubmitBtn, TweenInfo.new(0.1), {Position = originalPos - UDim2.new(0, 5, 0, 0)}):Play()
@@ -1037,4 +1119,3 @@ return {
     checkSavedKey = checkSavedKey,
     config = CONFIG
 }
-
