@@ -1,6 +1,6 @@
 local Loader = {}
 
---==== Detect Mobile =========================================================--
+--==== Detect Platform & Screen Ratio =======================================--
 local UserInputService = game:GetService("UserInputService")
 local function isMobile()
     local success, result = pcall(function()
@@ -10,6 +10,20 @@ local function isMobile()
 end
 
 local isOnMobile = isMobile()
+
+-- Detect if screen is wide (16:9 or wider)
+local function isWideScreen()
+    local success, viewport = pcall(function()
+        return game.Workspace.CurrentCamera.ViewportSize
+    end)
+    if not success or not viewport or viewport.X == 0 or viewport.Y == 0 then
+        return false
+    end
+    local aspectRatio = viewport.X / viewport.Y
+    return aspectRatio >= 1.77 -- 16:9 ≈ 1.777...
+end
+
+local isWide = isWideScreen()
 
 -- Helper for responsive sizing
 local function scaleSize(mobile, desktop)
@@ -550,31 +564,37 @@ function Loader:CreateKeySystem(callback)
     addCorner(submitBtn, scaleSize(12, 16))
     addGradient(submitBtn, {Color3.fromRGB(140, 160, 255), Color3.fromRGB(100, 130, 255)}, 90)
     
-    -- Get key button (responsive)
-local getKeyBtn = Instance.new("TextButton")
-getKeyBtn.Text = "📋 Get Key: " .. Config.KeySystem.keyLink
-getKeyBtn.Font = Enum.Font.Gotham
-getKeyBtn.TextSize = scaleSize(12, 14)
-getKeyBtn.TextColor3 = Color3.fromRGB(100, 100, 120)
-getKeyBtn.BackgroundTransparency = 1
-getKeyBtn.ZIndex = 2
-getKeyBtn.Parent = content
+    -- Get Key Button (FIXED FOR 16:9)
+    local getKeyBtn = Instance.new("TextButton")
+    getKeyBtn.Text = "📋 Get Key: " .. Config.KeySystem.keyLink
+    getKeyBtn.Font = Enum.Font.Gotham
+    getKeyBtn.TextSize = scaleSize(12, 14)
+    getKeyBtn.TextColor3 = Color3.fromRGB(100, 100, 120)
+    getKeyBtn.BackgroundTransparency = 1
+    getKeyBtn.ZIndex = 2
+    getKeyBtn.Parent = content
 
--- Dinamis ukuran berdasarkan teks + padding
-local textSize = getKeyBtn.TextSize
-local font = getKeyBtn.Font
-local textBounds = game:GetService("TextService"):GetTextSize(getKeyBtn.Text, textSize, font, Vector2.new(1000, 1000))
-local padding = scaleSize(20, 30)
-local btnWidth = math.min(textBounds.X + padding, scaleSize(280, 380)) -- max width for mobile/desktop
+    -- Calculate dynamic width with fallback
+    local textSize = getKeyBtn.TextSize
+    local font = getKeyBtn.Font
+    local textBounds = Vector2.new(200, 20)
+    pcall(function()
+        textBounds = game:GetService("TextService"):GetTextSize(getKeyBtn.Text, textSize, font, Vector2.new(1000, 1000))
+    end)
 
-getKeyBtn.Size = UDim2.new(0, btnWidth, 0, scaleSize(30, 35))
-getKeyBtn.Position = UDim2.new(0, scaleSize(30, 30), 1, -scaleSize(45, 45))
+    local padding = scaleSize(20, 30)
+    local btnWidth = math.min(textBounds.X + padding, scaleSize(280, 380))
 
--- Center horizontally if needed
-if isOnMobile then
-    getKeyBtn.Position = UDim2.new(0.5, -btnWidth/2, 1, -scaleSize(45, 45))
-end
-    
+    if isWide then
+        -- Wide screen (16:9+): centered, compact
+        getKeyBtn.Size = UDim2.new(0, btnWidth, 0, scaleSize(30, 35))
+        getKeyBtn.Position = UDim2.new(0.5, -btnWidth/2, 1, -scaleSize(45, 45))
+    else
+        -- Mobile/portrait: full width
+        getKeyBtn.Size = UDim2.new(1, -scaleSize(40, 60), 0, scaleSize(30, 35))
+        getKeyBtn.Position = UDim2.new(0, scaleSize(20, 30), 1, -scaleSize(45, 45))
+    end
+
     -- Error
     local errorMsg = Instance.new("TextLabel")
     errorMsg.Size = UDim2.new(1, -scaleSize(40, 60), 0, scaleSize(20, 25))
