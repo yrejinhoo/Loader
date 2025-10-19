@@ -10,13 +10,13 @@ local LocalPlayer = Players.LocalPlayer
 local userId = LocalPlayer.UserId
 
 -- GitHub URLs
-local GITHUB_VIP_URL = "https://raw.githubusercontent.com/yrejinhoo/Loader/refs/heads/main/vip.txt"
-local GITHUB_KEY_URL = "https://raw.githubusercontent.com/yrejinhoo/Loader/refs/heads/main/key.txt"
+local GITHUB_VIP_URL = "https://raw.githubusercontent.com/yourusername/vip/main/vip.txt"
+local GITHUB_KEY_URL = "https://raw.githubusercontent.com/yourusername/keys/main/keys.txt"
 
 -- Map Scripts
 local MAP_SCRIPTS = {
-    Arunika = "https://raw.githubusercontent.com/yrejinhoo/AstrionHUB/refs/heads/main/arunika.lua",
-    Yahayuk = "https://raw.githubusercontent.com/yrejinhoo/AstrionHUB/refs/heads/main/main.lua"
+    Arunika = "https://raw.githubusercontent.com/yourusername/maps/main/arunika.lua",
+    Yahayuk = "https://raw.githubusercontent.com/yrejinhoo/Loader/refs/heads/main/Loader.lua"
 }
 
 -- Detect device type
@@ -549,8 +549,8 @@ local function main()
             task.wait(1.5)
             
             -- Hide auth, show maps
-            WelcomeText.Text = "SELECT MAP"
-            Subtitle.Text = "Choose your destination"
+            
+            
             
             TweenService:Create(AuthContainer, TweenInfo.new(0.3), {
                 Position = UDim2.new(0.5, 0, 0, -300)
