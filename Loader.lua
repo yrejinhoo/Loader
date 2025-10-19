@@ -331,35 +331,35 @@ local function createLoader(isVIP, playerName)
 
     -- Map Selection Header (Fixed)
     local MapHeader = Instance.new("Frame")
-    MapHeader.Size = UDim2.new(1, 0, 0, isMobile() and 60 or 80)
+    MapHeader.Size = UDim2.new(1, 0, 0, isMobile() and 40 or 50)
     MapHeader.BackgroundTransparency = 1
     MapHeader.Parent = MapContainer
 
     -- Map Selection Title (Single)
     local MapTitle = Instance.new("TextLabel")
-    MapTitle.Size = UDim2.new(1, 0, 0, isMobile() and 25 or 35)
+    MapTitle.Size = UDim2.new(1, 0, 0, isMobile() and 20 or 25)
     MapTitle.BackgroundTransparency = 1
     MapTitle.Text = "SELECT MAP"
     MapTitle.TextColor3 = Color3.fromRGB(255, 215, 0)
-    MapTitle.TextSize = isMobile() and 16 or 22
+    MapTitle.TextSize = isMobile() and 14 or 18
     MapTitle.Font = Enum.Font.GothamBold
     MapTitle.Parent = MapHeader
 
     local MapSubtitle = Instance.new("TextLabel")
-    MapSubtitle.Size = UDim2.new(1, 0, 0, isMobile() and 15 or 20)
-    MapSubtitle.Position = UDim2.new(0, 0, 0, isMobile() and 30 or 40)
+    MapSubtitle.Size = UDim2.new(1, 0, 0, isMobile() and 12 or 15)
+    MapSubtitle.Position = UDim2.new(0, 0, 0, isMobile() and 22 or 28)
     MapSubtitle.BackgroundTransparency = 1
     MapSubtitle.Text = "Choose your destination"
     MapSubtitle.TextColor3 = Color3.fromRGB(160, 174, 192)
-    MapSubtitle.TextSize = isMobile() and 9 or 11
+    MapSubtitle.TextSize = isMobile() and 8 or 10
     MapSubtitle.Font = Enum.Font.Gotham
     MapSubtitle.Parent = MapHeader
 
     -- Scrollable Map Buttons Container
     local MapsScrollFrame = Instance.new("ScrollingFrame")
     MapsScrollFrame.Name = "MapsScrollFrame"
-    MapsScrollFrame.Size = UDim2.new(1, 0, 1, isMobile() and -60 or -80)
-    MapsScrollFrame.Position = UDim2.new(0, 0, 0, isMobile() and 60 or 80)
+    MapsScrollFrame.Size = UDim2.new(1, 0, 1, isMobile() and -40 or -50)
+    MapsScrollFrame.Position = UDim2.new(0, 0, 0, isMobile() and 40 or 50)
     MapsScrollFrame.BackgroundTransparency = 1
     MapsScrollFrame.ScrollBarThickness = 0
     MapsScrollFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
