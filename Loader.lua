@@ -526,7 +526,7 @@ function Loader:CreateKeySystem(callback)
     
     local usernameText = Instance.new("TextLabel")
     usernameText.Size = UDim2.new(1, -110, 0, 30)
-    usernameText.Position = UDim2.new(0, 0, 0, isMobile and 30 : 40)
+    usernameText.Position = UDim2.new(0, 0, 0, isMobile and 30 or 40)
     usernameText.BackgroundTransparency = 1
     usernameText.Text = game.Players.LocalPlayer.Name
     usernameText.TextSize = size.fontSize.title
@@ -839,7 +839,7 @@ function Loader:CreateMainUI()
     scroll.Name = "Scroll"
     scroll.BackgroundTransparency = 1
     scroll.Position = UDim2.new(0, size.padding, 0, size.headerHeight + size.padding * 2)
-    scroll.Size = UDim2.new(1, -size.padding*2, 1, -(size.headerHeight + size.padding*4 + (isMobile and 52 : 58)))
+    scroll.Size = UDim2.new(1, -size.padding*2, 1, -(size.headerHeight + size.padding*4 + (isMobile and 52 or 58)))
     scroll.CanvasSize = UDim2.new(0, 0, 0, 0)
     scroll.ScrollBarThickness = isMobile and 4 or 6
     scroll.ScrollBarImageColor3 = Color3.fromRGB(100, 100, 120)
@@ -900,7 +900,7 @@ function Loader:CreateMainUI()
         local titleL = Instance.new("TextLabel")
         titleL.BackgroundTransparency = 1
         titleL.Position = UDim2.new(0, iconSize + (isMobile and 18 or 22), 0, 0)
-        titleL.Size = UDim2.new(1, -(iconSize + (isMobile and 88 : 110)), 1, 0)
+        titleL.Size = UDim2.new(1, -(iconSize + (isMobile and 88 or 110)), 1, 0)
         titleL.Font = Enum.Font.GothamMedium
         titleL.TextSize = size.fontSize.item
         titleL.TextXAlignment = Enum.TextXAlignment.Left
@@ -916,7 +916,7 @@ function Loader:CreateMainUI()
         local switchBg = Instance.new("Frame")
         switchBg.Name = "Switch"
         switchBg.Size = UDim2.new(0, switchW, 0, switchH)
-        switchBg.Position = UDim2.new(1, -(switchW + (isMobile and 10 : 14)), 0.5, -switchH/2)
+        switchBg.Position = UDim2.new(1, -(switchW + (isMobile and 10 or 14)), 0.5, -switchH/2)
         switchBg.BackgroundColor3 = Color3.fromRGB(200, 200, 210)
         switchBg.ZIndex = 2
         switchBg.Parent = row
@@ -978,7 +978,7 @@ function Loader:CreateMainUI()
     end
 
     local function refreshCanvas()
-        scroll.CanvasSize = UDim2.new(0, 0, 0, list.AbsoluteContentSize.Y + (isMobile and 15 : 20))
+        scroll.CanvasSize = UDim2.new(0, 0, 0, list.AbsoluteContentSize.Y + (isMobile and 15 or 20))
     end
     list:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(refreshCanvas)
     refreshCanvas()
