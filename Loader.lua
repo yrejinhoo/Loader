@@ -11,7 +11,6 @@ end
 
 local isOnMobile = isMobile()
 
--- Detect if screen is wide (16:9 or wider)
 local function isWideScreen()
     local success, viewport = pcall(function()
         return game.Workspace.CurrentCamera.ViewportSize
@@ -20,27 +19,24 @@ local function isWideScreen()
         return false
     end
     local aspectRatio = viewport.X / viewport.Y
-    return aspectRatio >= 1.77 -- 16:9 ≈ 1.777...
+    return aspectRatio >= 1.77
 end
 
 local isWide = isWideScreen()
 
--- Helper for responsive sizing
 local function scaleSize(mobile, desktop)
     return isOnMobile and mobile or desktop
 end
 
 --==== Configuration =========================================================--
 local Config = {
-    -- Key System Settings
     KeySystem = {
         enabled = true,
-        correctKey = "change", -- Ganti dengan key Anda
-        keyLink = "xxx", -- Ganti dengan link key Anda
+        keyLink = "https://astrion-keycrate.vercel.app/", -- 🔴 URL ANDA
     },
     
     Profile = {
-        displayName = "ISI AJA",
+        displayName = "ASTRION",
         subtitle = "Loader Script",
         avatarUserId = game.Players.LocalPlayer and game.Players.LocalPlayer.UserId or 1,
     },
@@ -138,21 +134,17 @@ local function addGradient(instance, colors, rotation)
     return g
 end
 
--- Get current time and date
 local function getCurrentDateTime()
     local time = os.date("*t")
     local hour = time.hour
     local min = time.min
     local ampm = hour >= 12 and "PM" or "AM"
     hour = hour > 12 and hour - 12 or (hour == 0 and 12 or hour)
-    
     local timeStr = string.format("%02d:%02d %s", hour, min, ampm)
     local dateStr = os.date("%B %d, %Y")
-    
     return timeStr, dateStr
 end
 
--- Create animated clock widget
 local function createClockWidget(parent, isHeader)
     local width = isHeader and scaleSize(120, 140) or scaleSize(130, 140)
     local height = scaleSize(50, 60)
@@ -168,7 +160,6 @@ local function createClockWidget(parent, isHeader)
     clockFrame.Parent = parent
     addCorner(clockFrame, scaleSize(12, 14))
     
-    -- Time label
     local timeLabel = Instance.new("TextLabel")
     timeLabel.Size = UDim2.new(1, -16, 0, scaleSize(24, 28))
     timeLabel.Position = UDim2.new(0, 8, 0, scaleSize(4, 6))
@@ -179,7 +170,6 @@ local function createClockWidget(parent, isHeader)
     timeLabel.ZIndex = 2
     timeLabel.Parent = clockFrame
     
-    -- Date label
     local dateLabel = Instance.new("TextLabel")
     dateLabel.Size = UDim2.new(1, -16, 0, scaleSize(16, 18))
     dateLabel.Position = UDim2.new(0, 8, 0, scaleSize(28, 34))
@@ -190,7 +180,6 @@ local function createClockWidget(parent, isHeader)
     dateLabel.ZIndex = 2
     dateLabel.Parent = clockFrame
     
-    -- Update clock
     local function updateClock()
         local timeStr, dateStr = getCurrentDateTime()
         timeLabel.Text = timeStr
@@ -299,7 +288,6 @@ function Loader:CreateLoadingScreen()
     content.ZIndex = 2
     content.Parent = panel
     
-    -- Logo/Icon
     local logoSize = scaleSize(80, 100)
     local logo = Instance.new("TextLabel")
     logo.Size = UDim2.new(0, logoSize, 0, logoSize)
@@ -316,19 +304,17 @@ function Loader:CreateLoadingScreen()
     addCorner(logo, scaleSize(20, 24))
     addGradient(logo, {Color3.fromRGB(100, 150, 255), Color3.fromRGB(150, 100, 255)}, 135)
     
-    -- Title
     local title = Instance.new("TextLabel")
     title.Size = UDim2.new(1, -scaleSize(30, 40), 0, scaleSize(32, 40))
     title.Position = UDim2.new(0, scaleSize(15, 20), 0, scaleSize(120, 155))
     title.BackgroundTransparency = 1
-    title.Text = "Loading Rebels Loader"
+    title.Text = "Loading Astrion Loader"
     title.TextSize = scaleSize(20, 24)
     title.Font = Enum.Font.GothamBold
     title.TextColor3 = Color3.fromRGB(40, 40, 50)
     title.ZIndex = 2
     title.Parent = content
     
-    -- Status
     local status = Instance.new("TextLabel")
     status.Size = UDim2.new(1, -scaleSize(30, 40), 0, scaleSize(24, 30))
     status.Position = UDim2.new(0, scaleSize(15, 20), 0, scaleSize(150, 195))
@@ -340,7 +326,6 @@ function Loader:CreateLoadingScreen()
     status.ZIndex = 2
     status.Parent = content
     
-    -- Progress bar background
     local progBg = Instance.new("Frame")
     progBg.Size = UDim2.new(1, -scaleSize(60, 80), 0, scaleSize(6, 8))
     progBg.Position = UDim2.new(0, scaleSize(30, 40), 1, -scaleSize(40, 50))
@@ -350,7 +335,6 @@ function Loader:CreateLoadingScreen()
     progBg.Parent = content
     addCorner(progBg, scaleSize(3, 4))
     
-    -- Progress bar fill
     local progFill = Instance.new("Frame")
     progFill.Size = UDim2.new(0, 0, 1, 0)
     progFill.BackgroundColor3 = Color3.fromRGB(100, 150, 255)
@@ -362,7 +346,6 @@ function Loader:CreateLoadingScreen()
     ensureBlur()
     safeParent(gui)
     
-    -- Animate loading
     local steps = {
         {text = "Initializing...", progress = 0.2},
         {text = "Loading UI components...", progress = 0.4},
@@ -415,7 +398,6 @@ function Loader:CreateKeySystem(callback)
     content.ZIndex = 2
     content.Parent = panel
     
-    -- User Profile Section
     local profileSection = Instance.new("Frame")
     profileSection.Size = UDim2.new(1, -scaleSize(40, 60), 0, scaleSize(80, 100))
     profileSection.Position = UDim2.new(0, scaleSize(20, 30), 0, scaleSize(20, 30))
@@ -423,10 +405,8 @@ function Loader:CreateKeySystem(callback)
     profileSection.ZIndex = 2
     profileSection.Parent = content
     
-    -- Clock widget
     createClockWidget(content, false)
     
-    -- User Avatar
     local avatarSize = scaleSize(64, 80)
     local userAvatar = Instance.new("ImageLabel")
     userAvatar.Size = UDim2.new(0, avatarSize, 0, avatarSize)
@@ -444,7 +424,6 @@ function Loader:CreateKeySystem(callback)
         userAvatar.Image = thumb
     end)
     
-    -- Welcome Text Container
     local welcomeContainer = Instance.new("Frame")
     welcomeContainer.Size = UDim2.new(1, -avatarSize - scaleSize(10, 15), 1, 0)
     welcomeContainer.Position = UDim2.new(0, avatarSize + scaleSize(10, 15), 0, 0)
@@ -477,7 +456,6 @@ function Loader:CreateKeySystem(callback)
     usernameText.ZIndex = 2
     usernameText.Parent = welcomeContainer
     
-    -- Lock icon
     local lockSize = scaleSize(80, 100)
     local lockContainer = Instance.new("Frame")
     lockContainer.Size = UDim2.new(0, lockSize, 0, lockSize)
@@ -500,7 +478,6 @@ function Loader:CreateKeySystem(callback)
     lockIcon.ZIndex = 3
     lockIcon.Parent = lockContainer
     
-    -- Title & Subtitle
     local title = Instance.new("TextLabel")
     title.Size = UDim2.new(1, -scaleSize(40, 60), 0, scaleSize(30, 35))
     title.Position = UDim2.new(0, scaleSize(20, 30), 0, scaleSize(200, 270))
@@ -516,14 +493,13 @@ function Loader:CreateKeySystem(callback)
     subtitle.Size = UDim2.new(1, -scaleSize(40, 60), 0, scaleSize(24, 30))
     subtitle.Position = UDim2.new(0, scaleSize(20, 30), 0, scaleSize(230, 305))
     subtitle.BackgroundTransparency = 1
-    subtitle.Text = "Enter your access key to continue"
+    subtitle.Text = "Enter your Astrion key to continue"
     subtitle.TextSize = scaleSize(13, 15)
     subtitle.Font = Enum.Font.Gotham
     subtitle.TextColor3 = Color3.fromRGB(100, 100, 120)
     subtitle.ZIndex = 2
     subtitle.Parent = content
     
-    -- Input
     local inputHeight = scaleSize(44, 54)
     local inputBg = Instance.new("Frame")
     inputBg.Size = UDim2.new(1, -scaleSize(40, 60), 0, inputHeight)
@@ -538,7 +514,7 @@ function Loader:CreateKeySystem(callback)
     keyInput.Size = UDim2.new(1, -scaleSize(20, 30), 1, 0)
     keyInput.Position = UDim2.new(0, scaleSize(10, 15), 0, 0)
     keyInput.BackgroundTransparency = 1
-    keyInput.PlaceholderText = "Enter Key Here..."
+    keyInput.PlaceholderText = "Astrion_keyhabwubwva_XXXXXX"
     keyInput.Text = ""
     keyInput.TextSize = scaleSize(16, 18)
     keyInput.Font = Enum.Font.Gotham
@@ -549,7 +525,6 @@ function Loader:CreateKeySystem(callback)
     keyInput.ZIndex = 3
     keyInput.Parent = inputBg
     
-    -- Submit Button
     local submitBtn = Instance.new("TextButton")
     submitBtn.Size = UDim2.new(1, -scaleSize(40, 60), 0, inputHeight)
     submitBtn.Position = UDim2.new(0, scaleSize(20, 30), 0, scaleSize(300, 420))
@@ -564,9 +539,9 @@ function Loader:CreateKeySystem(callback)
     addCorner(submitBtn, scaleSize(12, 16))
     addGradient(submitBtn, {Color3.fromRGB(140, 160, 255), Color3.fromRGB(100, 130, 255)}, 90)
     
-    -- Get Key Button (FIXED FOR 16:9)
+    -- Get Key Button
     local getKeyBtn = Instance.new("TextButton")
-    getKeyBtn.Text = "📋 Get Key: " .. Config.KeySystem.keyLink
+    getKeyBtn.Text = "📋 Get Key"
     getKeyBtn.Font = Enum.Font.Gotham
     getKeyBtn.TextSize = scaleSize(12, 14)
     getKeyBtn.TextColor3 = Color3.fromRGB(100, 100, 120)
@@ -574,17 +549,7 @@ function Loader:CreateKeySystem(callback)
     getKeyBtn.ZIndex = 2
     getKeyBtn.Parent = content
 
-    -- Calculate dynamic width with fallback
-    local textSize = getKeyBtn.TextSize
-    local font = getKeyBtn.Font
-    local textBounds = Vector2.new(200, 20)
-    pcall(function()
-        textBounds = game:GetService("TextService"):GetTextSize(getKeyBtn.Text, textSize, font, Vector2.new(1000, 1000))
-    end)
-
-    local padding = scaleSize(20, 30)
-    local btnWidth = math.min(textBounds.X + padding, scaleSize(280, 380))
-
+    local btnWidth = scaleSize(200, 240)
     if isWide then
         getKeyBtn.Size = UDim2.new(0, btnWidth, 0, scaleSize(30, 35))
         getKeyBtn.Position = UDim2.new(0.5, -btnWidth/2, 1, -scaleSize(45, 45))
@@ -593,7 +558,6 @@ function Loader:CreateKeySystem(callback)
         getKeyBtn.Position = UDim2.new(0, scaleSize(20, 30), 1, -scaleSize(45, 45))
     end
 
-    -- Error
     local errorMsg = Instance.new("TextLabel")
     errorMsg.Size = UDim2.new(1, -scaleSize(40, 60), 0, scaleSize(20, 25))
     errorMsg.Position = UDim2.new(0, scaleSize(20, 30), 0, scaleSize(350, 478))
@@ -614,27 +578,56 @@ function Loader:CreateKeySystem(callback)
             setclipboard(Config.KeySystem.keyLink)
             getKeyBtn.Text = "✅ Link Copied!"
             wait(2)
-            getKeyBtn.Text = "📋 Get Key: " .. Config.KeySystem.keyLink
+            getKeyBtn.Text = "📋 Get Key"
         end)
     end)
     
+    -- 🔑 VERIFIKASI VIA WEB 🔑
     local function verifyKey()
-        local enteredKey = keyInput.Text
-        if enteredKey == Config.KeySystem.correctKey then
-            errorMsg.Visible = false
+        local rawKey = keyInput.Text
+        if not rawKey or rawKey == "" then
+            errorMsg.Text = "❌ Please enter a key"
+            errorMsg.Visible = true
+            return
+        end
+
+        local key = rawKey:gsub("%s+", ""):upper()
+        if not key:match("^ASTRION_KEYHABWUBWVA_") then
+            errorMsg.Text = "❌ Invalid key format"
+            errorMsg.Visible = true
+            return
+        end
+
+        errorMsg.Visible = false
+        submitBtn.Text = "Checking..."
+        submitBtn.BackgroundColor3 = Color3.fromRGB(180, 180, 180)
+
+        local validateUrl = "https://astrion-keycrate.vercel.app/validate?key=" .. key
+
+        local success, response = pcall(function()
+            return game:HttpGet(validateUrl)
+        end)
+
+        if not success or not response then
+            errorMsg.Text = "❌ Network error. Try again."
+            errorMsg.Visible = true
+            submitBtn.Text = "Verify Key"
+            submitBtn.BackgroundColor3 = Color3.fromRGB(110, 140, 255)
+            return
+        end
+
+        if response:find('"success":%s*true') then
             submitBtn.Text = "✅ Verified!"
             submitBtn.BackgroundColor3 = Color3.fromRGB(100, 200, 120)
-            submitBtn.BackgroundTransparency = 0
             wait(0.5)
             disableBlur()
             gui:Destroy()
             if callback then callback() end
         else
-            errorMsg.Text = "❌ Invalid key! Try again."
+            errorMsg.Text = "❌ Invalid or used key!"
             errorMsg.Visible = true
-            tween(inputBg, TweenInfo.new(0.1, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut, 0, true), {Position = UDim2.new(0, scaleSize(30, 40), 0, scaleSize(250, 350))})
-            wait(0.3)
-            inputBg.Position = UDim2.new(0, scaleSize(20, 30), 0, scaleSize(250, 350))
+            submitBtn.Text = "Verify Key"
+            submitBtn.BackgroundColor3 = Color3.fromRGB(110, 140, 255)
         end
     end
     
@@ -728,7 +721,6 @@ function Loader:CreateMainUI()
     sub.ZIndex = 2
     sub.Parent = header
     
-    -- Clock in header
     createClockWidget(header, true)
 
     local helpSize = scaleSize(32, 40)
@@ -976,15 +968,13 @@ function Loader:Init()
         pcall(function()
             local cg = game:GetService("CoreGui")
             local pg = game.Players.LocalPlayer:WaitForChild("PlayerGui")
-            
             for _, gui in ipairs(cg:GetChildren()) do
-                if gui.Name == "ModernGlassLoader" or gui.Name == "LoadingScreen" or gui.Name == "KeySystem" then
+                if gui.Name:find("Loader") or gui.Name:find("KeySystem") or gui.Name:find("LoadingScreen") then
                     gui:Destroy()
                 end
             end
-            
             for _, gui in ipairs(pg:GetChildren()) do
-                if gui.Name == "ModernGlassLoader" or gui.Name == "LoadingScreen" or gui.Name == "KeySystem" then
+                if gui.Name:find("Loader") or gui.Name:find("KeySystem") or gui.Name:find("LoadingScreen") then
                     gui:Destroy()
                 end
             end
@@ -994,7 +984,6 @@ function Loader:Init()
     cleanupOldGuis()
     disableBlur()
     wait(0.2)
-    
     self:CreateLoadingScreen()
     
     if Config.KeySystem.enabled then
