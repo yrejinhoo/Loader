@@ -1,4 +1,4 @@
--- VIP Loader System - FINAL FIX (NO TEXT HEADERS, NO DOUBLE TEXT, MAPS ALWAYS VISIBLE)
+-- VIP Loader System - FINAL FIX (NO TEXT, MAPS ALWAYS VISIBLE)
 -- Connected to: https://astrion-keycrate.vercel.app/api/validate
 
 local Players = game:GetService("Players")
@@ -183,7 +183,7 @@ local function createLoader(isVIP, playerName)
     RightPanel.BackgroundTransparency = 1
     RightPanel.Parent = MainFrame
 
-    -- Welcome Text (single element)
+    -- Welcome Text
     local WelcomeText = Instance.new("TextLabel")
     WelcomeText.Size = UDim2.new(1, -40, 0, isMobile() and 30 or 40)
     WelcomeText.Position = UDim2.new(0.5, 0, 0, isMobile() and 15 or 25)
@@ -266,7 +266,7 @@ local function createLoader(isVIP, playerName)
     StatusText.Visible = false
     StatusText.Parent = AuthContainer
 
-    -- Map Container (NO TEXT AT ALL!)
+    -- Map Container (NO TEXT, JUST BUTTONS)
     local MapContainer = Instance.new("Frame")
     MapContainer.Size = UDim2.new(1, -40, 1, isMobile() and -120 or -150)
     MapContainer.Position = UDim2.new(0.5, 0, 0, isMobile() and 75 or 100)
@@ -294,6 +294,7 @@ local function createLoader(isVIP, playerName)
     MapsLayout.SortOrder = Enum.SortOrder.LayoutOrder
     MapsLayout.Parent = MapsFrame
 
+    -- Connect canvas size to layout
     MapsLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
         MapsScrollFrame.CanvasSize = UDim2.new(0, 0, 0, MapsLayout.AbsoluteContentSize.Y)
     end)
@@ -405,14 +406,23 @@ local function main()
         BackgroundTransparency = 0
     }):Play()
 
-    -- If VIP or already validated, show map immediately (NO TEXT HEADER!)
+    -- If VIP or already validated, show map immediately (NO TEXT!)
     if isVIP or alreadyValid then
         task.wait(0.5)
-        WelcomeText.Text = ""  -- Clear welcome text too if needed
-        Subtitle.Text = ""     -- Clear subtitle
+        WelcomeText.Text = ""   -- Clear welcome text
+        Subtitle.Text = ""      -- Clear subtitle
         AuthContainer.Visible = false
         MapContainer.Visible = true
         MapContainer.Position = UDim2.new(0.5, 0, 0, isMobile() and 75 or 100)
+
+        -- Force layout update
+        task.spawn(function()
+            task.wait(0.1)
+            local layout = MapContainer:FindFirstChild("MapsScrollFrame"):FindFirstChild("MapsFrame"):FindFirstChild("UIGridLayout")
+            if layout then
+                layout:ApplyAutoCast()
+            end
+        end)
     end
 
     -- Verify button
@@ -434,15 +444,20 @@ local function main()
                 task.wait(1.2)
 
                 -- Switch to map view (NO TEXT!)
-                WelcomeText.Text = ""   -- Remove any remaining text
-                Subtitle.Text = ""      -- Remove subtitle
+                WelcomeText.Text = ""
+                Subtitle.Text = ""
                 AuthContainer.Visible = false
                 MapContainer.Visible = true
                 MapContainer.Position = UDim2.new(0.5, 0, 0, isMobile() and 75 or 100)
 
-                -- Optional: Add slight fade-in animation for maps
-                MapContainer.BackgroundTransparency = 1
-                TweenService:Create(MapContainer, TweenInfo.new(0.3), {BackgroundTransparency = 0}):Play()
+                -- Force layout update
+                task.spawn(function()
+                    task.wait(0.1)
+                    local layout = MapContainer:FindFirstChild("MapsScrollFrame"):FindFirstChild("MapsFrame"):FindFirstChild("UIGridLayout")
+                    if layout then
+                        layout:ApplyAutoCast()
+                    end
+                end)
             else
                 showStatus(StatusText, "✗ " .. (err or "Invalid key"), false)
             end
@@ -496,4 +511,4 @@ end
 
 -- Run
 main()
-print("✅ VIP Loader v4.0 loaded | Device:", isMobile() and "Mobile" or "Desktop")
+print("✅ VIP Loader v5.0 loaded | Device:", isMobile() and "Mobile" or "Desktop")
