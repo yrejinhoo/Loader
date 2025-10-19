@@ -10,13 +10,13 @@ local LocalPlayer = Players.LocalPlayer
 local userId = LocalPlayer.UserId
 
 -- GitHub URLs
-local GITHUB_VIP_URL = "https://raw.githubusercontent.com/yourusername/vip/main/vip.txt"
-local GITHUB_KEY_URL = "https://raw.githubusercontent.com/yourusername/keys/main/keys.txt"
+local GITHUB_VIP_URL = "https://raw.githubusercontent.com/yrejinhoo/Loader/refs/heads/main/vip.txt"
+local GITHUB_KEY_URL = "https://raw.githubusercontent.com/yrejinhoo/Loader/refs/heads/main/key.txt"
 
 -- Map Scripts
 local MAP_SCRIPTS = {
-    Arunika = "https://raw.githubusercontent.com/yourusername/maps/main/arunika.lua",
-    Yahayuk = "https://raw.githubusercontent.com/yrejinhoo/Loader/refs/heads/main/Loader.lua"
+    Arunika = "https://raw.githubusercontent.com/yrejinhoo/AstrionHUB/refs/heads/main/arunika.lua",
+    Yahayuk = "https://raw.githubusercontent.com/yrejinhoo/AstrionHUB/refs/heads/main/main.lua"
 }
 
 -- Detect device type
