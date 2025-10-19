@@ -1,6 +1,5 @@
--- VIP Loader System with Web Key Validation & Modern UI
--- Fixed: Double "SELECT MAP" text, scroll issues, session persistence
--- Connected to: https://astrion-keycrate.vercel.app
+-- VIP Loader System - FINAL FIX (No Double Text, Maps Always Visible After Verify)
+-- Connected to: https://astrion-keycrate.vercel.app/api/validate
 
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
@@ -22,7 +21,7 @@ local MAP_SCRIPTS = {
 -- Key validation endpoint
 local KEY_VALIDATE_URL = "https://astrion-keycrate.vercel.app/api/validate"
 
--- In-memory session storage (resets on game restart)
+-- Session storage (in-memory)
 local ValidatedKeys = {}
 
 -- Device detection
@@ -184,7 +183,7 @@ local function createLoader(isVIP, playerName)
     RightPanel.BackgroundTransparency = 1
     RightPanel.Parent = MainFrame
 
-    -- Welcome Text (single source of truth)
+    -- Welcome Text (single element)
     local WelcomeText = Instance.new("TextLabel")
     WelcomeText.Size = UDim2.new(1, -40, 0, isMobile() and 30 or 40)
     WelcomeText.Position = UDim2.new(0.5, 0, 0, isMobile() and 15 or 25)
@@ -267,16 +266,16 @@ local function createLoader(isVIP, playerName)
     StatusText.Visible = false
     StatusText.Parent = AuthContainer
 
-    -- Map Container (only ONE header)
+    -- Map Container (NO DOUBLE TEXT!)
     local MapContainer = Instance.new("Frame")
     MapContainer.Size = UDim2.new(1, -40, 1, isMobile() and -120 or -150)
     MapContainer.Position = UDim2.new(0.5, 0, 0, isMobile() and 75 or 100)
     MapContainer.AnchorPoint = Vector2.new(0.5, 0)
     MapContainer.BackgroundTransparency = 1
-    MapContainer.Visible = false
+    MapContainer.Visible = false  -- Default hidden
     MapContainer.Parent = RightPanel
 
-    -- SINGLE header (no duplicate!)
+    -- SINGLE Header (no duplicate!)
     local MapHeader = Instance.new("Frame")
     MapHeader.Size = UDim2.new(1, 0, 0, isMobile() and 40 or 50)
     MapHeader.BackgroundTransparency = 1
@@ -317,6 +316,7 @@ local function createLoader(isVIP, playerName)
     local MapsLayout = Instance.new("UIGridLayout")
     MapsLayout.CellSize = UDim2.new(0.48, 0, 0, isMobile() and 90 or 120)
     MapsLayout.CellPadding = UDim2.new(0.04, 0, 0, isMobile() and 10 or 15)
+    MapsLayout.SortOrder = Enum.SortOrder.LayoutOrder
     MapsLayout.Parent = MapsFrame
 
     MapsLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
@@ -430,12 +430,14 @@ local function main()
         BackgroundTransparency = 0
     }):Play()
 
-    -- Show map list if VIP or already validated
+    -- If VIP or already validated, show map immediately
     if isVIP or alreadyValid then
         task.wait(0.5)
         WelcomeText.Text = "SELECT MAP"
         Subtitle.Text = "Choose your destination"
         MapContainer.Visible = true
+        -- Ensure maps are positioned correctly
+        MapContainer.Position = UDim2.new(0.5, 0, 0, isMobile() and 75 or 100)
     end
 
     -- Verify button
@@ -459,13 +461,13 @@ local function main()
                 -- Switch to map view
                 WelcomeText.Text = "SELECT MAP"
                 Subtitle.Text = "Choose your destination"
-
-                TweenService:Create(AuthContainer, TweenInfo.new(0.3), {Position = UDim2.new(0.5, 0, 0, -300)}):Play()
-                task.wait(0.3)
                 AuthContainer.Visible = false
                 MapContainer.Visible = true
-                MapContainer.Position = UDim2.new(0.5, 0, 0, 400)
-                TweenService:Create(MapContainer, TweenInfo.new(0.5), {Position = UDim2.new(0.5, 0, 0, isMobile() and 75 or 100)}):Play()
+                MapContainer.Position = UDim2.new(0.5, 0, 0, isMobile() and 75 or 100) -- Reset position
+
+                -- Optional: Add slight fade-in animation for maps
+                MapContainer.BackgroundTransparency = 1
+                TweenService:Create(MapContainer, TweenInfo.new(0.3), {BackgroundTransparency = 0}):Play()
             else
                 showStatus(StatusText, "✗ " .. (err or "Invalid key"), false)
             end
@@ -505,7 +507,7 @@ local function main()
         if s then TweenService:Create(s, TweenInfo.new(0.2), {Transparency = 0.7, Thickness = 2}):Play() end
     end)
 
-    -- Glow animation
+    -- Glow animation for welcome text
     spawn(function()
         local glow = WelcomeText:FindFirstChildOfClass("UIStroke")
         if glow then
@@ -519,4 +521,4 @@ end
 
 -- Run
 main()
-print("✅ VIP Loader v2.0 loaded | Device:", isMobile() and "Mobile" or "Desktop")
+print("✅ VIP Loader v3.0 loaded | Device:", isMobile() and "Mobile" or "Desktop")
